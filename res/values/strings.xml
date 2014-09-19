@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Socks5</string>
+    <string name="local_address">Local Address:</string>
+    <string name="local_port">Local Port:</string>
+    <string name="server_address">Server Address:</string>
+    <string name="server_port">Server Port:</string>
+    <string name="restart">Restart</string>
 </resources>
