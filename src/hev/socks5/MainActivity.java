@@ -2,8 +2,14 @@ package hev.socks5;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.widget.EditText;
 import android.widget.Button;
 import android.view.View;
@@ -16,12 +22,23 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_server_address;
 	private EditText edittext_server_port;
 	private Button button_restart;
+	private Messenger mService = null;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			mService = null;
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		prefs = new Preferences(this);
+		prefs = new Preferences(getApplicationContext());
 		setContentView(R.layout.main);
 
 		edittext_local_address = (EditText) findViewById(R.id.local_address);
@@ -36,12 +53,15 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_port.setText(Integer.toString(prefs.getServerPort()));
 		button_restart.setOnClickListener(this);
 
-		startSocks5Service();
+		Intent i = new Intent(getApplicationContext(), MainService.class);
+		getApplicationContext().startService(i);
+		bindService(new Intent(this, MainService.class), mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onDestroy() {
 		savePrefs();
+		unbindService(mConnection);
 	}
 
 	public void onClick(View view) {
@@ -58,16 +78,24 @@ public class MainActivity extends Activity implements View.OnClickListener
 	}
 
 	private void startSocks5Service() {
-		Intent i = new Intent(this, MainService.class);
-		i.putExtra(Preferences.LOCAL_ADDRESS, prefs.getLocalAddress());
-		i.putExtra(Preferences.LOCAL_PORT, prefs.getLocalPort());
-		i.putExtra(Preferences.SERVER_ADDRESS, prefs.getServerAddress());
-		i.putExtra(Preferences.SERVER_PORT, prefs.getServerPort());
-		startService(i);
+		if (null == mService)
+		  return;
+
+		try {
+			Message msg = Message.obtain(null, MainService.MessageHandler.TYPE_START);
+			mService.send(msg);
+		} catch (RemoteException e) {
+		}
 	}
 
 	private void stopSocks5Service() {
-		Intent i = new Intent(this, MainService.class);
-		stopService(i);
+		if (null == mService)
+		  return;
+
+		try {
+			Message msg = Message.obtain(null, MainService.MessageHandler.TYPE_STOP);
+			mService.send(msg);
+		} catch (RemoteException e) {
+		}
 	}
 }
