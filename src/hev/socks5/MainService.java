@@ -44,6 +44,8 @@ public class MainService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		super.onStartCommand(intent, flags, startId);
+
 		startService();
 		return START_STICKY;
 	}
@@ -51,6 +53,8 @@ public class MainService extends Service {
 	@Override
 	public void onDestroy() {
 		stopService();
+
+		super.onDestroy();
 	}
 
 	public IBinder onBind(Intent intent) {
