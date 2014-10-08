@@ -62,6 +62,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 	protected void onDestroy() {
 		savePrefs();
 		unbindService(mConnection);
+
+		super.onDestroy();
 	}
 
 	public void onClick(View view) {
