@@ -39,7 +39,7 @@
 	android:id="@+id/bypass_addresses"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:singleLine="false"
+	android:inputType="textMultiLine"
 	/>
 <Button
 	android:id="@+id/control"

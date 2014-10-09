@@ -73,8 +73,12 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		edittext_server_address.setText(prefs.getServerAddress());
 		edittext_server_port.setText(Integer.toString(prefs.getServerPort()));
-		for (String addr : prefs.getBypassAddresses())
-		  edittext_bypass_addresses.setText(addr + "\n");
+		StringBuilder builder = new StringBuilder();
+		for (String addr : prefs.getBypassAddresses()) {
+			builder.append(addr);
+			builder.append("\n");
+		}
+		edittext_bypass_addresses.setText(builder.toString());
 		button_control.setOnClickListener(this);
 
 		/* socks5 service */
