@@ -3,6 +3,7 @@
     <string name="app_name">HTProxy</string>
     <string name="server_address">Server Address:</string>
     <string name="server_port">Server Port:</string>
-    <string name="bypass_addresses">Bypass Addresses:</string>
-    <string name="control">Start</string>
+    <string name="bypass_addresses">Extra Bypass Addresses:</string>
+    <string name="restart">Restart services</string>
+    <string name="control">Enable global proxy</string>
 </resources>

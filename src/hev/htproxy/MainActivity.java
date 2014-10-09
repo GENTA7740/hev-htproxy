@@ -26,6 +26,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_server_address;
 	private EditText edittext_server_port;
 	private EditText edittext_bypass_addresses;
+	private Button button_restart;
 	private Button button_control;
 	private Messenger mSocks5Service = null;
 	private Messenger mTProxyService = null;
@@ -69,6 +70,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_address = (EditText) findViewById(R.id.server_address);
 		edittext_server_port = (EditText) findViewById(R.id.server_port);
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
+		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
 
 		edittext_server_address.setText(prefs.getServerAddress());
@@ -79,6 +81,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			builder.append("\n");
 		}
 		edittext_bypass_addresses.setText(builder.toString());
+		button_restart.setOnClickListener(this);
 		button_control.setOnClickListener(this);
 
 		/* socks5 service */
@@ -106,13 +109,16 @@ public class MainActivity extends Activity implements View.OnClickListener
 	}
 
 	public void onClick(View view) {
-		stopDNSFwdService();
-		stopTProxyService();
-		stopSocks5Service();
-		savePrefs();
-		startSocks5Service();
-		startTProxyService();
-		startDNSFwdService();
+		if (view == button_restart) {
+			//stopDNSFwdService();
+			//stopTProxyService();
+			stopSocks5Service();
+			savePrefs();
+			startSocks5Service();
+			//startTProxyService();
+			//startDNSFwdService();
+		} else if (view == button_control) {
+		}
 	}
 
 	private void savePrefs() {

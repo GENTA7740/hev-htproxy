@@ -42,6 +42,12 @@
 	android:inputType="textMultiLine"
 	/>
 <Button
+	android:id="@+id/restart"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:text="@string/restart"
+	/>
+<Button
 	android:id="@+id/control"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
