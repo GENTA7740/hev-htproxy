@@ -5,5 +5,6 @@
     <string name="server_port">Server Port:</string>
     <string name="bypass_addresses">Extra Bypass Addresses:</string>
     <string name="restart">Restart services</string>
-    <string name="control">Enable global proxy</string>
+    <string name="control_enable">Enable global proxy</string>
+    <string name="control_disable">Disable global proxy</string>
 </resources>

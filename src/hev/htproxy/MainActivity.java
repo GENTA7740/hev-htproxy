@@ -96,6 +96,30 @@ public class MainActivity extends Activity implements View.OnClickListener
 		i = new Intent(getApplicationContext(), DNSFwdService.class);
 		getApplicationContext().startService(i);
 		bindService(new Intent(this, DNSFwdService.class), mDNSFwdConnection, Context.BIND_AUTO_CREATE);
+
+		/* is Supported */
+		button_control.setEnabled(false);
+		if (RedirectManager.isSupported())
+		  button_control.setEnabled(true);
+		else
+		  prefs.setHTProxyEnabled(false);
+		/* is Enabled */
+		boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
+		if (prefs.getHTProxyEnabled()) {
+			if (!redir_enabled) {
+				if (RedirectManager.setEnabled(true, getApplicationContext()))
+				  redir_enabled = true;
+			}
+		} else {
+			if (redir_enabled) {
+				if (RedirectManager.setEnabled(false, getApplicationContext()))
+				  redir_enabled = false;
+			}
+		}
+		if (redir_enabled)
+		  button_control.setText(R.string.control_disable);
+		else
+		  button_control.setText(R.string.control_enable);
 	}
 
 	@Override
@@ -118,6 +142,20 @@ public class MainActivity extends Activity implements View.OnClickListener
 			//startTProxyService();
 			//startDNSFwdService();
 		} else if (view == button_control) {
+			boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
+			if (redir_enabled) {
+				if (RedirectManager.setEnabled(false, getApplicationContext()))
+				  redir_enabled = false;
+			} else {
+				savePrefs();
+				if (RedirectManager.setEnabled(true, getApplicationContext()))
+				  redir_enabled = true;
+			}
+			if (redir_enabled)
+			  button_control.setText(R.string.control_disable);
+			else
+			  button_control.setText(R.string.control_enable);
+			prefs.setHTProxyEnabled(redir_enabled);
 		}
 	}
 

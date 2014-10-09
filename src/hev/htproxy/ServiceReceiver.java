@@ -22,6 +22,17 @@ public class ServiceReceiver extends BroadcastReceiver {
 			/* dns fwd service */
 			i = new Intent(context, DNSFwdService.class);
 			context.startService(i);
+
+			Context app_context = context.getApplicationContext();
+			boolean redir_enabled = RedirectManager.isEnabled(app_context);
+			Preferences prefs = new Preferences(app_context);
+			if (prefs.getHTProxyEnabled()) {
+				if (!redir_enabled)
+				  RedirectManager.setEnabled(true, app_context);
+			} else {
+				if (redir_enabled)
+				  RedirectManager.setEnabled(false, app_context);
+			}
 		}
 	}
 }

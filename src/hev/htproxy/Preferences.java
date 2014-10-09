@@ -15,6 +15,7 @@ public class Preferences
 	public static final String SERVER_ADDRESS = "ServerAddress";
 	public static final String SERVER_PORT = "ServerPort";
 	public static final String BYPASS_ASSRESSES = "BypassAddresses";
+	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
 	private SharedPreferences prefs;
 
@@ -49,6 +50,16 @@ public class Preferences
 	public void setBypassAddresses(Set<String> addresses) {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putStringSet(BYPASS_ASSRESSES, addresses);
+		editor.commit();
+	}
+
+	public boolean getHTProxyEnabled() {
+		return prefs.getBoolean(ENABLE_HTPROXY, false);
+	}
+
+	public void setHTProxyEnabled(boolean enable) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean(ENABLE_HTPROXY, enable);
 		editor.commit();
 	}
 

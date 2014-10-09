@@ -51,6 +51,6 @@
 	android:id="@+id/control"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:text="@string/control"
+	android:text="@string/control_enable"
 	/>
 </LinearLayout>
