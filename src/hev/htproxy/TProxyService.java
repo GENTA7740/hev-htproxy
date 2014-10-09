@@ -1,8 +1,8 @@
-/* MainService.java
+/* TProxyService.java
  * Heiher <r@hev.cc>
  */
 
-package hev.socks5;
+package hev.htproxy;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 
-public class MainService extends Service {
+public class TProxyService extends Service {
 	private static native void NativeStartService(String local_address, int local_port,
-			String server_address, int server_port);
+			String socks5_address, int socks5_port);
 	private static native void NativeStopService();
 
 	private boolean isRunning = false;
@@ -39,7 +39,7 @@ public class MainService extends Service {
 	}
 
 	static {
-		System.loadLibrary("hev-socks5-client");
+		System.loadLibrary("hev-socks5-tproxy");
 	}
 
 	@Override
@@ -66,10 +66,10 @@ public class MainService extends Service {
 		  return;
 
 		Preferences prefs = new Preferences(getApplicationContext());
-		NativeStartService(prefs.getLocalAddress(),
-				prefs.getLocalPort(),
-				prefs.getServerAddress(),
-				prefs.getServerPort());
+		NativeStartService(prefs.getTProxyAddress(),
+				prefs.getTProxyPort(),
+				prefs.getSocks5Address(),
+				prefs.getSocks5Port());
 		isRunning = true;
 	}
 

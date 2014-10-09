@@ -7,31 +7,6 @@
 <TextView
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:text="@string/local_address"
-	android:singleLine="true"
-	/>
-<EditText
-	android:id="@+id/local_address"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:singleLine="true"
-	/>
-<TextView
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:text="@string/local_port"
-	android:singleLine="true"
-	/>
-<EditText
-	android:id="@+id/local_port"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:singleLine="true"
-	android:inputType="number"
-	/>
-<TextView
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
 	android:text="@string/server_address"
 	android:singleLine="true"
 	/>
@@ -54,10 +29,22 @@
 	android:singleLine="true"
 	android:inputType="number"
 	/>
-<Button
-	android:id="@+id/restart"
+<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/bypass_addresses"
+	android:singleLine="true"
+	/>
+<EditText
+	android:id="@+id/bypass_addresses"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:text="@string/restart"
+	android:singleLine="false"
+	/>
+<Button
+	android:id="@+id/control"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:text="@string/control"
 	/>
 </LinearLayout>

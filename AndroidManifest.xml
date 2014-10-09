@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	  package="hev.socks5"
+	  package="hev.htproxy"
 	  android:versionCode="1"
 	  android:versionName="1.0">
 	<application android:label="@string/app_name" >
-		<service android:name=".MainService" android:process=":native">
+		<service android:name=".Socks5Service" android:process=":native">
 			<intent-filter>
-				<action android:name="hev.socks5.MainService" />
+				<action android:name="hev.htproxy.Socks5Service" />
+			</intent-filter>
+		</service>
+		<service android:name=".TProxyService" android:process=":native">
+			<intent-filter>
+				<action android:name="hev.htproxy.TProxyService" />
+			</intent-filter>
+		</service>
+		<service android:name=".DNSFwdService" android:process=":native">
+			<intent-filter>
+				<action android:name="hev.htproxy.DNSFwdService" />
 			</intent-filter>
 		</service>
 		<receiver android:enabled="true" android:name=".ServiceReceiver">
