@@ -89,13 +89,12 @@ public class RedirectManager {
 	}
 
 	public static boolean setEnabled(boolean enable, Context context) {
+		boolean retValue = true;
 		int type = enable ? TYPE_APPEND : TYPE_DELETE;
 		String[] cmds = generateCmds(type, context);
-		for (String cmd : cmds) {
-			if (0 != runSuperCmd(cmd))
-			  return false;
-		}
+		for (String cmd : cmds)
+		  retValue = (0 == runSuperCmd(cmd)) ? true : false;
 
-		return true;
+		return (enable) ? retValue : true;
 	}
 }
