@@ -122,10 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 				  redir_enabled = false;
 			}
 		}
-		if (redir_enabled)
-		  button_control.setText(R.string.control_disable);
-		else
-		  button_control.setText(R.string.control_enable);
+		lockUI(redir_enabled);
 	}
 
 	@Override
@@ -157,12 +154,19 @@ public class MainActivity extends Activity implements View.OnClickListener
 				if (RedirectManager.setEnabled(true, getApplicationContext()))
 				  redir_enabled = true;
 			}
-			if (redir_enabled)
-			  button_control.setText(R.string.control_disable);
-			else
-			  button_control.setText(R.string.control_enable);
+			lockUI(redir_enabled);
 			prefs.setHTProxyEnabled(redir_enabled);
 		}
+	}
+
+	private void lockUI(boolean lock) {
+		if (lock)
+		  button_control.setText(R.string.control_disable);
+		else
+		  button_control.setText(R.string.control_enable);
+		edittext_server_address.setEnabled(!lock);
+		edittext_server_port.setEnabled(!lock);
+		edittext_bypass_addresses.setEnabled(!lock);
 	}
 
 	private void savePrefs() {
