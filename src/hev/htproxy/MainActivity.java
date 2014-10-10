@@ -18,6 +18,8 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.Scroller;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 
 public class MainActivity extends Activity implements View.OnClickListener
@@ -75,6 +77,10 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		edittext_server_address.setText(prefs.getServerAddress());
 		edittext_server_port.setText(Integer.toString(prefs.getServerPort()));
+		edittext_bypass_addresses.setScroller(new Scroller(this));
+		edittext_bypass_addresses.setMaxLines(10);
+		edittext_bypass_addresses.setVerticalScrollBarEnabled(true);
+		edittext_bypass_addresses.setMovementMethod(new ScrollingMovementMethod());
 		StringBuilder builder = new StringBuilder();
 		for (String addr : prefs.getBypassAddresses()) {
 			builder.append(addr);
