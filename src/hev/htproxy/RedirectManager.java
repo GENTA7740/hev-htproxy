@@ -95,6 +95,13 @@ public class RedirectManager {
 		for (String cmd : cmds)
 		  retValue = (0 == runSuperCmd(cmd)) ? true : false;
 
+		/* enable failed, clear */
+		if (enable && !retValue) {
+			cmds = generateCmds(TYPE_DELETE, context);
+			for (String cmd : cmds)
+			  runSuperCmd(cmd);
+		}
+
 		return (enable) ? retValue : true;
 	}
 }
