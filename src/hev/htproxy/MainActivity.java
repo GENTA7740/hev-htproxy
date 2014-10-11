@@ -149,13 +149,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 	public void onClick(View view) {
 		if (view == button_restart) {
-			//stopDNSFwdService();
-			//stopTProxyService();
+			stopDNSFwdService();
+			stopTProxyService();
 			stopSocks5Service();
 			savePrefs();
 			startSocks5Service();
-			//startTProxyService();
-			//startDNSFwdService();
+			startTProxyService();
+			startDNSFwdService();
 		} else if (view == button_control) {
 			boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
 			if (redir_enabled) {
