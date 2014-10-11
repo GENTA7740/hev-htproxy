@@ -93,15 +93,12 @@ public class MainActivity extends Activity implements View.OnClickListener
 		/* socks5 service */
 		Intent i = new Intent(getApplicationContext(), Socks5Service.class);
 		getApplicationContext().startService(i);
-		bindService(new Intent(this, Socks5Service.class), mSocks5Connection, Context.BIND_AUTO_CREATE);
 		/* tproxy service */
 		i = new Intent(getApplicationContext(), TProxyService.class);
 		getApplicationContext().startService(i);
-		bindService(new Intent(this, TProxyService.class), mTProxyConnection, Context.BIND_AUTO_CREATE);
 		/* dns fwd service */
 		i = new Intent(getApplicationContext(), DNSFwdService.class);
 		getApplicationContext().startService(i);
-		bindService(new Intent(this, DNSFwdService.class), mDNSFwdConnection, Context.BIND_AUTO_CREATE);
 
 		/* is Supported */
 		button_control.setEnabled(false);
@@ -126,11 +123,26 @@ public class MainActivity extends Activity implements View.OnClickListener
 	}
 
 	@Override
-	protected void onDestroy() {
-		savePrefs();
+	protected void onStart() {
+		super.onStart();
+
+		bindService(new Intent(this, Socks5Service.class), mSocks5Connection, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, TProxyService.class), mTProxyConnection, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, DNSFwdService.class), mDNSFwdConnection, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onStop() {
 		unbindService(mDNSFwdConnection);
 		unbindService(mTProxyConnection);
 		unbindService(mSocks5Connection);
+
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		savePrefs();
 
 		super.onDestroy();
 	}
