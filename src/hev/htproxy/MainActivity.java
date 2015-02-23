@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_server_address;
 	private EditText edittext_server_port;
 	private EditText edittext_bypass_addresses;
+	private EditText edittext_applications;
 	private Button button_restart;
 	private Button button_control;
 	private Messenger mSocks5Service = null;
@@ -72,6 +73,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_address = (EditText) findViewById(R.id.server_address);
 		edittext_server_port = (EditText) findViewById(R.id.server_port);
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
+		edittext_applications = (EditText) findViewById(R.id.applications);
 		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
 
@@ -87,6 +89,16 @@ public class MainActivity extends Activity implements View.OnClickListener
 			builder.append("\n");
 		}
 		edittext_bypass_addresses.setText(builder.toString());
+		edittext_applications.setScroller(new Scroller(this));
+		edittext_applications.setMaxLines(10);
+		edittext_applications.setVerticalScrollBarEnabled(true);
+		edittext_applications.setMovementMethod(new ScrollingMovementMethod());
+		builder = new StringBuilder();
+		for (String app : prefs.getApplications()) {
+			builder.append(app);
+			builder.append("\n");
+		}
+		edittext_applications.setText(builder.toString());
 		button_restart.setOnClickListener(this);
 		button_control.setOnClickListener(this);
 
@@ -179,11 +191,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_address.setEnabled(!lock);
 		edittext_server_port.setEnabled(!lock);
 		edittext_bypass_addresses.setEnabled(!lock);
+		edittext_applications.setEnabled(!lock);
 	}
 
 	private void savePrefs() {
-		String[] addrs;
+		String[] addrs, apps;
 		Set<String> bypass_addresses = new HashSet<String>();
+		Set<String> applications = new HashSet<String>();
 
 		prefs.setServerAddress(edittext_server_address.getText().toString());
 		prefs.setServerPort(Integer.parseInt(edittext_server_port.getText().toString()));
@@ -194,6 +208,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 			  bypass_addresses.add(addr);
 		}
 		prefs.setBypassAddresses(bypass_addresses);
+
+		apps = edittext_applications.getText().toString().split("\n");
+		for (String app : apps ) {
+			if (!app.isEmpty())
+			  applications.add(app);
+		}
+		prefs.setApplications(applications);
 	}
 
 	private void startSocks5Service() {

@@ -54,7 +54,8 @@ public class RedirectManager {
 
 		Preferences prefs = new Preferences(context);
 		Set<String> bypass_addresses = prefs.getBypassAddresses();
-		int i = 10, cmds_size = 11 + bypass_addresses.size();
+		Set<String> applications = prefs.getApplications();
+		int i = 10, cmds_size = 10 + bypass_addresses.size() + applications.size();
 		String[] cmds = new String[cmds_size];
 		cmds[0] = cmd_iptables + cmd_type + "OUTPUT -d " + prefs.getServerAddress() + "/32 -j RETURN";
 		cmds[1] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 -j REDIRECT --to-port " +
@@ -69,8 +70,14 @@ public class RedirectManager {
 		cmds[9] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
 		for (String addr : bypass_addresses)
 		  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -d " + addr + " -j RETURN";
-		cmds[cmds_size-1] = cmd_iptables + cmd_type + "OUTPUT -p tcp -j REDIRECT --to-port " +
-			Integer.toString(prefs.getTProxyPort());
+		for (String app : applications) {
+			String owner = "";
+
+			if (!app.equalsIgnoreCase("global"))
+			  owner = "-m owner --uid-owner " + app;
+			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p tcp " + owner + " -j REDIRECT --to-port " +
+				Integer.toString(prefs.getTProxyPort());
+		}
 
 		return cmds;
 	}
