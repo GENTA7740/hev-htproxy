@@ -6,6 +6,6 @@
     <string name="bypass_addresses">Extra Bypass Addresses:</string>
     <string name="applications">Applications: (e.g \'global\')</string>
     <string name="restart">Restart services</string>
-    <string name="control_enable">Enable global proxy</string>
-    <string name="control_disable">Disable global proxy</string>
+    <string name="control_enable">Enable proxy</string>
+    <string name="control_disable">Disable proxy</string>
 </resources>
