@@ -55,7 +55,7 @@ public class RedirectManager {
 		Preferences prefs = new Preferences(context);
 		Set<String> bypass_addresses = prefs.getBypassAddresses();
 		Set<String> applications = prefs.getApplications();
-		int i = 10, cmds_size = 10 + bypass_addresses.size() + applications.size();
+		int i = 9, cmds_size = 9 + bypass_addresses.size() + applications.size();
 		String[] cmds = new String[cmds_size];
 		cmds[0] = cmd_iptables + cmd_type + "OUTPUT -d " + prefs.getServerAddress() + "/32 -j RETURN";
 		cmds[1] = cmd_iptables + cmd_type + "OUTPUT -d 0.0.0.0/8 -j RETURN";
@@ -66,18 +66,28 @@ public class RedirectManager {
 		cmds[6] = cmd_iptables + cmd_type + "OUTPUT -d 192.168.0.0/16 -j RETURN";
 		cmds[7] = cmd_iptables + cmd_type + "OUTPUT -d 224.0.0.0/4 -j RETURN";
 		cmds[8] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
-		/* On Android, every applications DNS queries proxy by netd run as root */
-		cmds[9] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 -m owner --uid-owner 0 -j REDIRECT --to-port " +
-			Integer.toString(prefs.getDNSFwdPort());
 		for (String addr : bypass_addresses)
 		  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -d " + addr + " -j RETURN";
 		for (String app : applications) {
-			String owner = "";
+			String owner = "", uid = app, ptype = "";
 
-			if (!app.equalsIgnoreCase("global"))
-			  owner = "-m owner --uid-owner " + app;
-			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p tcp " + owner + " -j REDIRECT --to-port " +
-				Integer.toString(prefs.getTProxyPort());
+			if (app.startsWith("#")) {
+				cmds[i++] = "";
+				continue;
+			}
+			if (app.contains(":")) {
+				String[] strs = app.split(":");
+				uid = strs[0];
+				ptype = strs[1];
+			}
+			if (!uid.equalsIgnoreCase("global"))
+			  owner = "-m owner --uid-owner " + uid;
+			if (ptype.equalsIgnoreCase("dns"))
+			  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 " + owner + " -j REDIRECT --to-port " +
+				  Integer.toString(prefs.getDNSFwdPort());
+			else
+			  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p tcp " + owner + " -j REDIRECT --to-port " +
+				  Integer.toString(prefs.getTProxyPort());
 		}
 
 		return cmds;
