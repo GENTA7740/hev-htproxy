@@ -210,7 +210,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		prefs.setBypassAddresses(bypass_addresses);
 
 		apps = edittext_applications.getText().toString().split("\n");
-		for (String app : apps ) {
+		for (String app : apps) {
 			if (!app.isEmpty())
 			  applications.add(app);
 		}
