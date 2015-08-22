@@ -66,7 +66,8 @@ public class RedirectManager {
 		cmds[6] = cmd_iptables + cmd_type + "OUTPUT -d 192.168.0.0/16 -j RETURN";
 		cmds[7] = cmd_iptables + cmd_type + "OUTPUT -d 224.0.0.0/4 -j RETURN";
 		cmds[8] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
-		cmds[9] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 -j REDIRECT --to-port " +
+		/* On Android, every applications DNS queries proxy by netd run as root */
+		cmds[9] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 -m owner --uid-owner 0 -j REDIRECT --to-port " +
 			Integer.toString(prefs.getDNSFwdPort());
 		for (String addr : bypass_addresses)
 		  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -d " + addr + " -j RETURN";
