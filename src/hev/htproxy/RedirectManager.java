@@ -55,17 +55,19 @@ public class RedirectManager {
 		Preferences prefs = new Preferences(context);
 		Set<String> bypass_addresses = prefs.getBypassAddresses();
 		Set<String> applications = prefs.getApplications();
-		int i = 9, cmds_size = 9 + bypass_addresses.size() + applications.size() * 2;
+		int i = 10, cmds_size = 10 + bypass_addresses.size() + applications.size();
 		String[] cmds = new String[cmds_size];
 		cmds[0] = cmd_iptables + cmd_type + "OUTPUT -d " + prefs.getServerAddress() + "/32 -j RETURN";
-		cmds[1] = cmd_iptables + cmd_type + "OUTPUT -d 0.0.0.0/8 -j RETURN";
-		cmds[2] = cmd_iptables + cmd_type + "OUTPUT -d 10.0.0.0/8 -j RETURN";
-		cmds[3] = cmd_iptables + cmd_type + "OUTPUT -d 127.0.0.0/8 -j RETURN";
-		cmds[4] = cmd_iptables + cmd_type + "OUTPUT -d 169.254.0.0/16 -j RETURN";
-		cmds[5] = cmd_iptables + cmd_type + "OUTPUT -d 172.16.0.0/12 -j RETURN";
-		cmds[6] = cmd_iptables + cmd_type + "OUTPUT -d 192.168.0.0/16 -j RETURN";
-		cmds[7] = cmd_iptables + cmd_type + "OUTPUT -d 224.0.0.0/4 -j RETURN";
-		cmds[8] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
+		cmds[1] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 -j REDIRECT --to-port " +
+			Integer.toString(prefs.getDNSFwdPort());
+		cmds[2] = cmd_iptables + cmd_type + "OUTPUT -d 0.0.0.0/8 -j RETURN";
+		cmds[3] = cmd_iptables + cmd_type + "OUTPUT -d 10.0.0.0/8 -j RETURN";
+		cmds[4] = cmd_iptables + cmd_type + "OUTPUT -d 127.0.0.0/8 -j RETURN";
+		cmds[5] = cmd_iptables + cmd_type + "OUTPUT -d 169.254.0.0/16 -j RETURN";
+		cmds[6] = cmd_iptables + cmd_type + "OUTPUT -d 172.16.0.0/12 -j RETURN";
+		cmds[7] = cmd_iptables + cmd_type + "OUTPUT -d 192.168.0.0/16 -j RETURN";
+		cmds[8] = cmd_iptables + cmd_type + "OUTPUT -d 224.0.0.0/4 -j RETURN";
+		cmds[9] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
 		for (String addr : bypass_addresses)
 		  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -d " + addr + " -j RETURN";
 		for (String app : applications) {
@@ -75,8 +77,6 @@ public class RedirectManager {
 			  owner = "-m owner --uid-owner " + app;
 			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p tcp " + owner + " -j REDIRECT --to-port " +
 				Integer.toString(prefs.getTProxyPort());
-			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 " + owner + " -j REDIRECT --to-port " +
-				Integer.toString(prefs.getDNSFwdPort());
 		}
 
 		return cmds;
