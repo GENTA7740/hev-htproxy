@@ -188,6 +188,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		  button_control.setText(R.string.control_disable);
 		else
 		  button_control.setText(R.string.control_enable);
+		button_restart.setEnabled(!lock);
 		edittext_server_address.setEnabled(!lock);
 		edittext_server_port.setEnabled(!lock);
 		edittext_bypass_addresses.setEnabled(!lock);
