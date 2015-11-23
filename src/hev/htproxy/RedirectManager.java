@@ -8,8 +8,7 @@ import java.util.Set;
 import java.lang.Process;
 import java.lang.ProcessBuilder;
 import java.lang.InterruptedException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import android.content.Context;
 
@@ -28,7 +27,10 @@ public class RedirectManager {
 			pb.command("su", "-c", cmd);
 			Process p = pb.start();
 			p.waitFor();
+			BufferedInputStream in = new BufferedInputStream(p.getErrorStream());
 			exitValue = p.exitValue();
+			if (0 < in.available())
+			  exitValue |= Integer.MIN_VALUE;
 			p.destroy();
 		} catch (IOException e) {
 		} catch (InterruptedException e) {
