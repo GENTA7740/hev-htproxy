@@ -57,19 +57,24 @@ public class RedirectManager {
 		Preferences prefs = new Preferences(context);
 		Set<String> bypass_addresses = prefs.getBypassAddresses();
 		Set<String> applications = prefs.getApplications();
-		int i = 9, cmds_size = 9 + bypass_addresses.size() + applications.size();
+		int i = 0, cmds_size = 9 + bypass_addresses.size() + applications.size();
+		cmds_size += (type != TYPE_CHECK) ? 2 : 0;
 		String[] cmds = new String[cmds_size];
-		cmds[0] = cmd_iptables + cmd_type + "OUTPUT -d " + prefs.getServerAddress() + "/32 -j RETURN";
-		cmds[1] = cmd_iptables + cmd_type + "OUTPUT -d 0.0.0.0/8 -j RETURN";
-		cmds[2] = cmd_iptables + cmd_type + "OUTPUT -d 10.0.0.0/8 -j RETURN";
-		cmds[3] = cmd_iptables + cmd_type + "OUTPUT -d 127.0.0.0/8 -j RETURN";
-		cmds[4] = cmd_iptables + cmd_type + "OUTPUT -d 169.254.0.0/16 -j RETURN";
-		cmds[5] = cmd_iptables + cmd_type + "OUTPUT -d 172.16.0.0/12 -j RETURN";
-		cmds[6] = cmd_iptables + cmd_type + "OUTPUT -d 192.168.0.0/16 -j RETURN";
-		cmds[7] = cmd_iptables + cmd_type + "OUTPUT -d 224.0.0.0/4 -j RETURN";
-		cmds[8] = cmd_iptables + cmd_type + "OUTPUT -d 240.0.0.0/4 -j RETURN";
+		if (type == TYPE_APPEND) {
+			cmds[i++] = cmd_iptables + "-N HTPROXY";
+			cmds[i++] = cmd_iptables + "-I OUTPUT -j HTPROXY";
+		}
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d " + prefs.getServerAddress() + "/32 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 0.0.0.0/8 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 10.0.0.0/8 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 127.0.0.0/8 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 169.254.0.0/16 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 172.16.0.0/12 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 192.168.0.0/16 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 224.0.0.0/4 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 240.0.0.0/4 -j RETURN";
 		for (String addr : bypass_addresses)
-		  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -d " + addr + " -j RETURN";
+		  cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d " + addr + " -j RETURN";
 		for (String app : applications) {
 			String owner = "", uid = app, ptype = "";
 
@@ -85,11 +90,16 @@ public class RedirectManager {
 			if (!uid.equalsIgnoreCase("global"))
 			  owner = "-m owner --uid-owner " + uid;
 			if (ptype.equalsIgnoreCase("dns"))
-			  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p udp --dport 53 " + owner + " -j REDIRECT --to-port " +
+			  cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p udp --dport 53 " + owner + " -j REDIRECT --to-port " +
 				  Integer.toString(prefs.getDNSFwdPort());
 			else
-			  cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -p tcp " + owner + " -j REDIRECT --to-port " +
+			  cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p tcp " + owner + " -j REDIRECT --to-port " +
 				  Integer.toString(prefs.getTProxyPort());
+		}
+
+		if (type == TYPE_DELETE) {
+			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -j HTPROXY";
+			cmds[i++] = cmd_iptables + "-X HTPROXY";
 		}
 
 		return cmds;
