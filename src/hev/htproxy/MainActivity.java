@@ -79,24 +79,18 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		edittext_server_address.setText(prefs.getServerAddress());
 		edittext_server_port.setText(Integer.toString(prefs.getServerPort()));
-		edittext_bypass_addresses.setScroller(new Scroller(this));
-		edittext_bypass_addresses.setMaxLines(10);
-		edittext_bypass_addresses.setVerticalScrollBarEnabled(true);
-		edittext_bypass_addresses.setMovementMethod(new ScrollingMovementMethod());
 		StringBuilder builder = new StringBuilder();
 		for (String addr : prefs.getBypassAddresses()) {
+			if (0 < builder.length())
+			  builder.append("\n");
 			builder.append(addr);
-			builder.append("\n");
 		}
 		edittext_bypass_addresses.setText(builder.toString());
-		edittext_applications.setScroller(new Scroller(this));
-		edittext_applications.setMaxLines(10);
-		edittext_applications.setVerticalScrollBarEnabled(true);
-		edittext_applications.setMovementMethod(new ScrollingMovementMethod());
 		builder = new StringBuilder();
 		for (String app : prefs.getApplications()) {
+			if (0 < builder.length())
+			  builder.append("\n");
 			builder.append(app);
-			builder.append("\n");
 		}
 		edittext_applications.setText(builder.toString());
 		button_restart.setOnClickListener(this);
