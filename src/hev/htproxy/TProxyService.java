@@ -5,6 +5,8 @@
 package hev.htproxy;
 
 import android.app.Service;
+import android.app.Notification;
+import android.app.Notification.Builder;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Handler;
@@ -47,11 +49,17 @@ public class TProxyService extends Service {
 		super.onStartCommand(intent, flags, startId);
 
 		startService();
+		Notification notify = new Notification.Builder(this)
+			.setContentTitle(getString(R.string.app_name))
+			.setSmallIcon(android.R.drawable.sym_def_app_icon)
+			.build();
+		startForeground(1, notify);
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
+		stopForeground(true);
 		stopService();
 
 		super.onDestroy();
