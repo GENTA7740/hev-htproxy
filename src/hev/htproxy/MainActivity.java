@@ -31,19 +31,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_applications;
 	private Button button_restart;
 	private Button button_control;
-	private Messenger mSocks5Service = null;
 	private Messenger mTProxyService = null;
-	private Messenger mDNSFwdService = null;
 
-	private ServiceConnection mSocks5Connection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			mSocks5Service = new Messenger(service);
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			mSocks5Service = null;
-		}
-	};
 	private ServiceConnection mTProxyConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mTProxyService = new Messenger(service);
@@ -51,15 +40,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		public void onServiceDisconnected(ComponentName className) {
 			mTProxyService = null;
-		}
-	};
-	private ServiceConnection mDNSFwdConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			mDNSFwdService = new Messenger(service);
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			mDNSFwdService = null;
 		}
 	};
 
@@ -96,14 +76,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		button_restart.setOnClickListener(this);
 		button_control.setOnClickListener(this);
 
-		/* socks5 service */
-		Intent i = new Intent(getApplicationContext(), Socks5Service.class);
-		getApplicationContext().startService(i);
 		/* tproxy service */
-		i = new Intent(getApplicationContext(), TProxyService.class);
-		getApplicationContext().startService(i);
-		/* dns fwd service */
-		i = new Intent(getApplicationContext(), DNSFwdService.class);
+		Intent i = new Intent(getApplicationContext(), TProxyService.class);
 		getApplicationContext().startService(i);
 
 		/* is Supported */
@@ -132,16 +106,12 @@ public class MainActivity extends Activity implements View.OnClickListener
 	protected void onStart() {
 		super.onStart();
 
-		bindService(new Intent(this, Socks5Service.class), mSocks5Connection, Context.BIND_AUTO_CREATE);
 		bindService(new Intent(this, TProxyService.class), mTProxyConnection, Context.BIND_AUTO_CREATE);
-		bindService(new Intent(this, DNSFwdService.class), mDNSFwdConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onStop() {
-		unbindService(mDNSFwdConnection);
 		unbindService(mTProxyConnection);
-		unbindService(mSocks5Connection);
 
 		super.onStop();
 	}
@@ -155,13 +125,9 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 	public void onClick(View view) {
 		if (view == button_restart) {
-			stopDNSFwdService();
 			stopTProxyService();
-			stopSocks5Service();
 			savePrefs();
-			startSocks5Service();
 			startTProxyService();
-			startDNSFwdService();
 		} else if (view == button_control) {
 			boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
 			if (redir_enabled) {
@@ -212,28 +178,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 		prefs.setApplications(applications);
 	}
 
-	private void startSocks5Service() {
-		if (null == mSocks5Service)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, Socks5Service.MessageHandler.TYPE_START);
-			mSocks5Service.send(msg);
-		} catch (RemoteException e) {
-		}
-	}
-
-	private void stopSocks5Service() {
-		if (null == mSocks5Service)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, Socks5Service.MessageHandler.TYPE_STOP);
-			mSocks5Service.send(msg);
-		} catch (RemoteException e) {
-		}
-	}
-
 	private void startTProxyService() {
 		if (null == mTProxyService)
 		  return;
@@ -252,28 +196,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 		try {
 			Message msg = Message.obtain(null, TProxyService.MessageHandler.TYPE_STOP);
 			mTProxyService.send(msg);
-		} catch (RemoteException e) {
-		}
-	}
-
-	private void startDNSFwdService() {
-		if (null == mDNSFwdService)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, DNSFwdService.MessageHandler.TYPE_START);
-			mDNSFwdService.send(msg);
-		} catch (RemoteException e) {
-		}
-	}
-
-	private void stopDNSFwdService() {
-		if (null == mDNSFwdService)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, DNSFwdService.MessageHandler.TYPE_STOP);
-			mDNSFwdService.send(msg);
 		} catch (RemoteException e) {
 		}
 	}

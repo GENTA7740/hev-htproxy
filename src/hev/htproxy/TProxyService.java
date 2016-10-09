@@ -14,9 +14,17 @@ import android.os.Message;
 import android.os.Messenger;
 
 public class TProxyService extends Service {
-	private static native void NativeStartService(String local_address, int local_port,
+	private static native void Socks5StartService(String local_address, int local_port,
+			String server_address, int server_port);
+	private static native void Socks5StopService();
+
+	private static native void DNSFwdStartService(String local_address, int local_port,
+			String upstream_address);
+	private static native void DNSFwdStopService();
+
+	private static native void TProxyStartService(String local_address, int local_port,
 			String socks5_address, int socks5_port);
-	private static native void NativeStopService();
+	private static native void TProxyStopService();
 
 	private boolean isRunning = false;
 	private final Messenger mMessenger = new Messenger(new MessageHandler());
@@ -41,6 +49,8 @@ public class TProxyService extends Service {
 	}
 
 	static {
+		System.loadLibrary("hev-dns-forwarder");
+		System.loadLibrary("hev-socks5-client");
 		System.loadLibrary("hev-socks5-tproxy");
 	}
 
@@ -74,10 +84,24 @@ public class TProxyService extends Service {
 		  return;
 
 		Preferences prefs = new Preferences(getApplicationContext());
-		NativeStartService(prefs.getTProxyAddress(),
+
+		/* Socks5 */
+		Socks5StartService(prefs.getSocks5Address(),
+				prefs.getSocks5Port(),
+				prefs.getServerAddress(),
+				prefs.getServerPort());
+
+		/* DNSFwd */
+		DNSFwdStartService(prefs.getDNSFwdAddress(),
+				prefs.getDNSFwdPort(),
+				prefs.getDNSUpstreamAddress());
+
+		/* TProxy */
+		TProxyStartService(prefs.getTProxyAddress(),
 				prefs.getTProxyPort(),
 				prefs.getSocks5Address(),
 				prefs.getSocks5Port());
+
 		isRunning = true;
 	}
 
@@ -85,7 +109,15 @@ public class TProxyService extends Service {
 		if (!isRunning)
 		  return;
 
-		NativeStopService();
+		/* TProxy */
+		TProxyStopService();
+
+		/* DNSFwd */
+		DNSFwdStopService();
+
+		/* Socks5 */
+		Socks5StopService();
+
 		isRunning = false;
 	}
 }
