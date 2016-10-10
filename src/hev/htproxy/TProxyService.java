@@ -59,17 +59,11 @@ public class TProxyService extends Service {
 		super.onStartCommand(intent, flags, startId);
 
 		startService();
-		Notification notify = new Notification.Builder(this)
-			.setContentTitle(getString(R.string.app_name))
-			.setSmallIcon(android.R.drawable.sym_def_app_icon)
-			.build();
-		startForeground(1, notify);
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		stopForeground(true);
 		stopService();
 
 		super.onDestroy();
@@ -102,12 +96,20 @@ public class TProxyService extends Service {
 				prefs.getSocks5Address(),
 				prefs.getSocks5Port());
 
+		Notification notify = new Notification.Builder(this)
+			.setContentTitle(getString(R.string.app_name))
+			.setSmallIcon(android.R.drawable.sym_def_app_icon)
+			.build();
+		startForeground(1, notify);
+
 		isRunning = true;
 	}
 
 	public void stopService() {
 		if (!isRunning)
 		  return;
+
+		stopForeground(true);
 
 		/* TProxy */
 		TProxyStopService();
