@@ -21,7 +21,7 @@ public class Preferences
 	private SharedPreferences prefs;
 
 	public Preferences(Context context) {
-		prefs = context.getSharedPreferences(PREFS_NAME, 0);
+		prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_MULTI_PROCESS);
 	}
 
 	public String getServerAddress() {
