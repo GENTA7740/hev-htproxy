@@ -16,6 +16,9 @@ import android.os.Messenger;
 public class TProxyService extends Service {
 	private static native void Socks5StartService(String local_address, int local_port,
 			String server_address, int server_port);
+	private static native void Socks5StartServiceWithPassword(String local_address,
+			int local_port, String server_address, int server_port,
+			String password);
 	private static native void Socks5StopService();
 
 	private static native void DNSFwdStartService(String local_address, int local_port,
@@ -80,10 +83,18 @@ public class TProxyService extends Service {
 		Preferences prefs = new Preferences(getApplicationContext());
 
 		/* Socks5 */
-		Socks5StartService(prefs.getSocks5Address(),
-				prefs.getSocks5Port(),
-				prefs.getServerAddress(),
-				prefs.getServerPort());
+		if (0 < prefs.getPassword().length()) {
+			Socks5StartServiceWithPassword(prefs.getSocks5Address(),
+					prefs.getSocks5Port(),
+					prefs.getServerAddress(),
+					prefs.getServerPort(),
+					prefs.getPassword());
+		} else {
+			Socks5StartService(prefs.getSocks5Address(),
+					prefs.getSocks5Port(),
+					prefs.getServerAddress(),
+					prefs.getServerPort());
+		}
 
 		/* DNSFwd */
 		DNSFwdStartService(prefs.getDNSFwdAddress(),
