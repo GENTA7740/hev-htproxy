@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_server_address;
 	private EditText edittext_server_port;
 	private EditText edittext_bypass_addresses;
+	private EditText edittext_password;
 	private EditText edittext_applications;
 	private Button button_restart;
 	private Button button_control;
@@ -53,6 +54,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_address = (EditText) findViewById(R.id.server_address);
 		edittext_server_port = (EditText) findViewById(R.id.server_port);
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
+		edittext_password = (EditText) findViewById(R.id.password);
 		edittext_applications = (EditText) findViewById(R.id.applications);
 		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
@@ -66,6 +68,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			builder.append(addr);
 		}
 		edittext_bypass_addresses.setText(builder.toString());
+		edittext_password.setText(prefs.getPassword());
 		builder = new StringBuilder();
 		for (String app : prefs.getApplications()) {
 			if (0 < builder.length())
@@ -152,6 +155,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_address.setEnabled(!lock);
 		edittext_server_port.setEnabled(!lock);
 		edittext_bypass_addresses.setEnabled(!lock);
+		edittext_password.setEnabled(!lock);
 		edittext_applications.setEnabled(!lock);
 	}
 
@@ -169,6 +173,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			  bypass_addresses.add(addr);
 		}
 		prefs.setBypassAddresses(bypass_addresses);
+		prefs.setPassword(edittext_password.getText().toString());
 
 		apps = edittext_applications.getText().toString().split("\n");
 		for (String app : apps) {
