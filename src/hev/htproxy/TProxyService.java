@@ -21,11 +21,8 @@ public class TProxyService extends Service {
 			String password);
 	private static native void Socks5StopService();
 
-	private static native void DNSFwdStartService(String local_address, int local_port,
-			String upstream_address);
-	private static native void DNSFwdStopService();
-
 	private static native void TProxyStartService(String local_address, int local_port,
+			String local_dns_address, int local_dns_port,
 			String socks5_address, int socks5_port);
 	private static native void TProxyStopService();
 
@@ -52,7 +49,6 @@ public class TProxyService extends Service {
 	}
 
 	static {
-		System.loadLibrary("hev-dns-forwarder");
 		System.loadLibrary("hev-socks5-client");
 		System.loadLibrary("hev-socks5-tproxy");
 	}
@@ -96,14 +92,11 @@ public class TProxyService extends Service {
 					prefs.getServerPort());
 		}
 
-		/* DNSFwd */
-		DNSFwdStartService(prefs.getDNSFwdAddress(),
-				prefs.getDNSFwdPort(),
-				prefs.getDNSUpstreamAddress());
-
 		/* TProxy */
 		TProxyStartService(prefs.getTProxyAddress(),
 				prefs.getTProxyPort(),
+				prefs.getDNSFwdAddress(),
+				prefs.getDNSFwdPort(),
 				prefs.getSocks5Address(),
 				prefs.getSocks5Port());
 
@@ -124,9 +117,6 @@ public class TProxyService extends Service {
 
 		/* TProxy */
 		TProxyStopService();
-
-		/* DNSFwd */
-		DNSFwdStopService();
 
 		/* Socks5 */
 		Socks5StopService();
