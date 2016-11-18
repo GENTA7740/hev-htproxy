@@ -108,8 +108,4 @@ public class Preferences
 	public int getDNSFwdPort() {
 		return 5300;
 	}
-
-	public String getDNSUpstreamAddress() {
-		return "8.8.8.8";
-	}
 }
