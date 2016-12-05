@@ -20,6 +20,8 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:singleLine="true"
+	android:inputType="number|numberDecimal"
+	android:digits="0123456789."
 	/>
 <TextView
 	android:layout_width="wrap_content"
@@ -32,7 +34,8 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:singleLine="true"
-	android:inputType="number"
+	android:inputType="number|numberDecimal"
+	android:digits="0123456789"
 	/>
 <TextView
 	android:layout_width="wrap_content"
