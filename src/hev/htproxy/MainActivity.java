@@ -30,6 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_bypass_addresses;
 	private EditText edittext_password;
 	private EditText edittext_applications;
+	private EditText edittext_extra_configs;
 	private Button button_restart;
 	private Button button_control;
 	private Messenger mTProxyService = null;
@@ -56,6 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
 		edittext_password = (EditText) findViewById(R.id.password);
 		edittext_applications = (EditText) findViewById(R.id.applications);
+		edittext_extra_configs = (EditText) findViewById(R.id.extra_configs);
 		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
 
@@ -76,6 +78,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			builder.append(app);
 		}
 		edittext_applications.setText(builder.toString());
+		edittext_extra_configs.setText(prefs.getExtraConfigs());
 		button_restart.setOnClickListener(this);
 		button_control.setOnClickListener(this);
 
@@ -157,6 +160,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_bypass_addresses.setEnabled(!lock);
 		edittext_password.setEnabled(!lock);
 		edittext_applications.setEnabled(!lock);
+		edittext_extra_configs.setEnabled(!lock);
 	}
 
 	private void savePrefs() {
@@ -181,6 +185,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			  applications.add(app);
 		}
 		prefs.setApplications(applications);
+		prefs.setExtraConfigs(edittext_extra_configs.getText().toString());
 	}
 
 	private void startTProxyService() {
