@@ -17,6 +17,7 @@ public class Preferences
 	public static final String BYPASS_ASSRESSES = "BypassAddresses";
 	public static final String PASSWORD = "Password";
 	public static final String APPLICATIONS = "Applications";
+	public static final String EXTRA_CONFIGS = "ExtraConfigs";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
 	private SharedPreferences prefs;
@@ -72,6 +73,16 @@ public class Preferences
 	public void setApplications(Set<String> applications) {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putStringSet(APPLICATIONS, applications);
+		editor.commit();
+	}
+
+	public String getExtraConfigs() {
+		return prefs.getString(EXTRA_CONFIGS, "");
+	}
+
+	public void setExtraConfigs(String extra_configs) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(EXTRA_CONFIGS, extra_configs);
 		editor.commit();
 	}
 
