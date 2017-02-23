@@ -4,26 +4,24 @@
 
 package hev.htproxy;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import android.app.Service;
 import android.app.Notification;
 import android.app.Notification.Builder;
 import android.content.Intent;
+import android.content.Context;
 import android.os.IBinder;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 
 public class TProxyService extends Service {
-	private static native void Socks5StartService(String local_address, int local_port,
-			String server_address, int server_port);
-	private static native void Socks5StartServiceWithPassword(String local_address,
-			int local_port, String server_address, int server_port,
-			String password);
+	private static native void Socks5StartService(String config_path);
 	private static native void Socks5StopService();
 
-	private static native void TProxyStartService(String local_address, int local_port,
-			String local_dns_address, int local_dns_port,
-			String socks5_address, int socks5_port);
+	private static native void TProxyStartService(String config_path);
 	private static native void TProxyStopService();
 
 	private boolean isRunning = false;
@@ -76,29 +74,53 @@ public class TProxyService extends Service {
 		if (isRunning)
 		  return;
 
-		Preferences prefs = new Preferences(getApplicationContext());
+		Context app_context = getApplicationContext();
+		Preferences prefs = new Preferences(app_context);
 
 		/* Socks5 */
-		if (0 < prefs.getPassword().length()) {
-			Socks5StartServiceWithPassword(prefs.getSocks5Address(),
-					prefs.getSocks5Port(),
-					prefs.getServerAddress(),
-					prefs.getServerPort(),
-					prefs.getPassword());
-		} else {
-			Socks5StartService(prefs.getSocks5Address(),
-					prefs.getSocks5Port(),
-					prefs.getServerAddress(),
-					prefs.getServerPort());
+		File socks5_file = new File(app_context.getCacheDir(), "socks5.conf");
+		try {
+			socks5_file.createNewFile();
+			FileOutputStream fos = new FileOutputStream(socks5_file, false);
+
+			String socks5_conf = "[Main]\n" +
+				"Port=" + prefs.getSocks5Port() + "\n" +
+				"ListenAddress=" + prefs.getSocks5Address() + "\n" +
+				"[Srv1]\n" +
+				"Port=" + prefs.getServerPort() + "\n" +
+				"Address=" + prefs.getServerAddress() + "\n" +
+				"Password=" + prefs.getPassword() + "\n" +
+				prefs.getExtraConfigs();
+
+			fos.write (socks5_conf.getBytes());
+			fos.close();
+		} catch (IOException e) {
+			return;
 		}
+		Socks5StartService(socks5_file.getAbsolutePath());
 
 		/* TProxy */
-		TProxyStartService(prefs.getTProxyAddress(),
-				prefs.getTProxyPort(),
-				prefs.getDNSFwdAddress(),
-				prefs.getDNSFwdPort(),
-				prefs.getSocks5Address(),
-				prefs.getSocks5Port());
+		File tproxy_file = new File(app_context.getCacheDir(), "tproxy.conf");
+		try {
+			tproxy_file.createNewFile();
+			FileOutputStream fos = new FileOutputStream(tproxy_file, false);
+
+			String tproxy_conf = "[Socks5]\n" +
+				"Port=" + prefs.getSocks5Port() + "\n" +
+				"Address=" + prefs.getSocks5Address() + "\n" +
+				"[TCP]\n" +
+				"Port=" + prefs.getTProxyPort() + "\n" +
+				"ListenAddress=" + prefs.getTProxyAddress() + "\n" +
+				"[DNS]\n" +
+				"Port=" + prefs.getDNSFwdPort() + "\n" +
+				"ListenAddress=" + prefs.getDNSFwdAddress() + "\n";
+
+			fos.write (tproxy_conf.getBytes());
+			fos.close();
+		} catch (IOException e) {
+			return;
+		}
+		TProxyStartService(tproxy_file.getAbsolutePath());
 
 		Notification notify = new Notification.Builder(this)
 			.setContentTitle(getString(R.string.app_name))
