@@ -98,7 +98,7 @@ public class Preferences
 	}
 
 	public int getTProxyPort() {
-		return 10800;
+		return 1088;
 	}
 
 	public String getDNSFwdAddress() {
