@@ -91,7 +91,8 @@ public class RedirectManager {
 			if (!uid.equalsIgnoreCase("global"))
 			  owner = "-m owner --uid-owner " + uid;
 			if (ptype.equalsIgnoreCase("dns")) {
-				cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p udp --dport 53 "
+				String op = (type == TYPE_APPEND) ? " -I " : cmd_type;
+				cmds[i++] = cmd_iptables + op + "HTPROXY -p udp --dport 53 "
 					+ owner + " -j REDIRECT --to-port " +
 					Integer.toString(prefs.getDNSFwdPort());
 			} else {
