@@ -84,6 +84,7 @@ public class TProxyService extends Service {
 			FileOutputStream fos = new FileOutputStream(socks5_file, false);
 
 			String socks5_conf = "[Main]\n" +
+				"Workers=4\n" +
 				"Port=" + prefs.getSocks5Port() + "\n" +
 				"ListenAddress=" + prefs.getSocks5Address() + "\n" +
 				"[Srv1]\n" +
@@ -105,7 +106,9 @@ public class TProxyService extends Service {
 			tproxy_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(tproxy_file, false);
 
-			String tproxy_conf = "[Socks5]\n" +
+			String tproxy_conf = "[Main]\n" +
+				"Workers=4\n" +
+				"[Socks5]\n" +
 				"Port=" + prefs.getSocks5Port() + "\n" +
 				"Address=" + prefs.getSocks5Address() + "\n" +
 				"[TCP]\n" +
