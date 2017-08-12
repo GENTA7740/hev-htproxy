@@ -74,11 +74,10 @@ public class TProxyService extends Service {
 		if (isRunning)
 		  return;
 
-		Context app_context = getApplicationContext();
-		Preferences prefs = new Preferences(app_context);
+		Preferences prefs = new Preferences(this);
 
 		/* Socks5 */
-		File socks5_file = new File(app_context.getCacheDir(), "socks5.conf");
+		File socks5_file = new File(getCacheDir(), "socks5.conf");
 		try {
 			socks5_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(socks5_file, false);
@@ -101,7 +100,7 @@ public class TProxyService extends Service {
 		Socks5StartService(socks5_file.getAbsolutePath());
 
 		/* TProxy */
-		File tproxy_file = new File(app_context.getCacheDir(), "tproxy.conf");
+		File tproxy_file = new File(getCacheDir(), "tproxy.conf");
 		try {
 			tproxy_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(tproxy_file, false);
