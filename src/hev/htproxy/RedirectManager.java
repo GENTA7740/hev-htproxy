@@ -40,24 +40,33 @@ public class RedirectManager {
 	}
 
 	public static String[] generateCmds(int type, Context context) {
-		String cmd_type;
+		String cmd_type, cmd_type_dns;
 		switch (type) {
 		case TYPE_APPEND:
 			cmd_type = " -A ";
+			cmd_type_dns = " -I ";
 			break;
 		case TYPE_CHECK:
 			cmd_type = " -C ";
+			cmd_type_dns = cmd_type;
 			break;
 		case TYPE_DELETE:
 		default:
 			cmd_type = " -D ";
+			cmd_type_dns = cmd_type;
 			break;
 		}
 
 		Preferences prefs = new Preferences(context);
 		Set<String> bypass_addresses = prefs.getBypassAddresses();
-		Set<String> applications = prefs.getApplications();
-		int i = 0, cmds_size = 9 + bypass_addresses.size() + applications.size();
+		int i = 0, cmds_size = 9 + bypass_addresses.size();
+		if (prefs.getGlobalProxy()) {
+			cmds_size += 2;
+		} else {
+			Set<String> uids = prefs.getUIDs();
+			cmds_size += uids.size() * 2;
+		}
+
 		cmds_size += (type != TYPE_CHECK) ? 2 : 0;
 		String[] cmds = new String[cmds_size];
 		if (type == TYPE_APPEND) {
@@ -76,26 +85,20 @@ public class RedirectManager {
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 240.0.0.0/4 -j RETURN";
 		for (String addr : bypass_addresses)
 		  cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d " + addr + " -j RETURN";
-		for (String app : applications) {
-			String owner = "", uid = app, ptype = "";
-
-			if (app.startsWith("#")) {
-				cmds[i++] = "";
-				continue;
-			}
-			if (app.contains(":")) {
-				String[] strs = app.split(":");
-				uid = strs[0];
-				ptype = strs[1];
-			}
-			if (!uid.equalsIgnoreCase("global"))
-			  owner = "-m owner --uid-owner " + uid;
-			if (ptype.equalsIgnoreCase("dns")) {
-				String op = (type == TYPE_APPEND) ? " -I " : cmd_type;
-				cmds[i++] = cmd_iptables + op + "HTPROXY -p udp --dport 53 "
+		if (prefs.getGlobalProxy()) {
+			cmds[i++] = cmd_iptables + cmd_type_dns + "HTPROXY -p udp --dport 53 "
+				+ " -j REDIRECT --to-port " +
+				Integer.toString(prefs.getDNSFwdPort());
+			cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p tcp " +
+				" -j REDIRECT --to-port " +
+				Integer.toString(prefs.getTProxyPort());
+		} else {
+			Set<String> uids = prefs.getUIDs();
+			for (String uid : uids) {
+				String owner = "-m owner --uid-owner " + uid;
+				cmds[i++] = cmd_iptables + cmd_type_dns + "HTPROXY -p udp --dport 53 "
 					+ owner + " -j REDIRECT --to-port " +
 					Integer.toString(prefs.getDNSFwdPort());
-			} else {
 				cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p tcp " + owner +
 					" -j REDIRECT --to-port " +
 					Integer.toString(prefs.getTProxyPort());

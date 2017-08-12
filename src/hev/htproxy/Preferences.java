@@ -16,7 +16,9 @@ public class Preferences
 	public static final String SERVER_PORT = "ServerPort";
 	public static final String BYPASS_ASSRESSES = "BypassAddresses";
 	public static final String PASSWORD = "Password";
+	public static final String GLOBAL_PROXY = "GlobalProxy";
 	public static final String APPLICATIONS = "Applications";
+	public static final String UIDS = "UIDs";
 	public static final String EXTRA_CONFIGS = "ExtraConfigs";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
@@ -66,6 +68,16 @@ public class Preferences
 		editor.commit();
 	}
 
+	public boolean getGlobalProxy() {
+		return prefs.getBoolean(GLOBAL_PROXY, false);
+	}
+
+	public void setGlobalProxy(boolean enable) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean(GLOBAL_PROXY, enable);
+		editor.commit();
+	}
+
 	public Set<String> getApplications() {
 		return prefs.getStringSet(APPLICATIONS, new HashSet<String>());
 	}
@@ -73,6 +85,16 @@ public class Preferences
 	public void setApplications(Set<String> applications) {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putStringSet(APPLICATIONS, applications);
+		editor.commit();
+	}
+
+	public Set<String> getUIDs() {
+		return prefs.getStringSet(UIDS, new HashSet<String>());
+	}
+
+	public void setUIDs(Set<String> uids) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putStringSet(UIDS, uids);
 		editor.commit();
 	}
 
