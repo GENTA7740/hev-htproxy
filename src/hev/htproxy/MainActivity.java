@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		prefs = new Preferences(getApplicationContext());
+		prefs = new Preferences(this);
 		setContentView(R.layout.main);
 
 		edittext_server_address = (EditText) findViewById(R.id.server_address);
@@ -82,8 +82,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		button_control.setOnClickListener(this);
 
 		/* tproxy service */
-		Intent i = new Intent(getApplicationContext(), TProxyService.class);
-		getApplicationContext().startService(i);
+		Intent i = new Intent(this, TProxyService.class);
+		startService(i);
 
 		/* is Supported */
 		button_control.setEnabled(false);
@@ -92,15 +92,15 @@ public class MainActivity extends Activity implements View.OnClickListener
 		else
 		  prefs.setHTProxyEnabled(false);
 		/* is Enabled */
-		boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
+		boolean redir_enabled = RedirectManager.isEnabled(this);
 		if (prefs.getHTProxyEnabled()) {
 			if (!redir_enabled) {
-				if (RedirectManager.setEnabled(true, getApplicationContext()))
+				if (RedirectManager.setEnabled(true, this))
 				  redir_enabled = true;
 			}
 		} else {
 			if (redir_enabled) {
-				if (RedirectManager.setEnabled(false, getApplicationContext()))
+				if (RedirectManager.setEnabled(false, this))
 				  redir_enabled = false;
 			}
 		}
@@ -138,13 +138,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 			savePrefs();
 			startTProxyService();
 		} else if (view == button_control) {
-			boolean redir_enabled = RedirectManager.isEnabled(getApplicationContext());
+			boolean redir_enabled = RedirectManager.isEnabled(this);
 			if (redir_enabled) {
-				if (RedirectManager.setEnabled(false, getApplicationContext()))
+				if (RedirectManager.setEnabled(false, this))
 				  redir_enabled = false;
 			} else {
 				savePrefs();
-				if (RedirectManager.setEnabled(true, getApplicationContext()))
+				if (RedirectManager.setEnabled(true, this))
 				  redir_enabled = true;
 			}
 			lockUI(redir_enabled);
