@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private EditText edittext_bypass_addresses;
 	private EditText edittext_password;
 	private EditText edittext_extra_configs;
+	private CheckBox checkbox_extra_configs_edit;
 	private CheckBox checkbox_global_proxy;
 	private Button button_applications;
 	private Button button_restart;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
 		edittext_password = (EditText) findViewById(R.id.password);
 		edittext_extra_configs = (EditText) findViewById(R.id.extra_configs);
+		checkbox_extra_configs_edit = (CheckBox) findViewById(R.id.extra_configs_edit);
 		checkbox_global_proxy = (CheckBox) findViewById(R.id.global_proxy);
 		button_applications = (Button) findViewById(R.id.applications);
 		button_restart = (Button) findViewById(R.id.restart);
@@ -75,6 +77,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_bypass_addresses.setText(builder.toString());
 		edittext_password.setText(prefs.getPassword());
 		edittext_extra_configs.setText(prefs.getExtraConfigs());
+		checkbox_extra_configs_edit.setOnClickListener(this);
+		checkbox_extra_configs_edit.setChecked(false);
 		checkbox_global_proxy.setOnClickListener(this);
 		checkbox_global_proxy.setChecked(prefs.getGlobalProxy());
 		button_applications.setOnClickListener(this);
@@ -129,7 +133,9 @@ public class MainActivity extends Activity implements View.OnClickListener
 	}
 
 	public void onClick(View view) {
-		if (view == checkbox_global_proxy) {
+		if (view == checkbox_extra_configs_edit) {
+			edittext_extra_configs.setEnabled(checkbox_extra_configs_edit.isChecked());
+		} else if (view == checkbox_global_proxy) {
 			button_applications.setEnabled(!checkbox_global_proxy.isChecked());
 		} else if (view == button_applications) {
 			startActivity(new Intent(this, AppListActivity.class));
@@ -157,6 +163,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		  button_control.setText(R.string.control_disable);
 		else
 		  button_control.setText(R.string.control_enable);
+		checkbox_extra_configs_edit.setEnabled(!lock);
 		checkbox_global_proxy.setEnabled(!lock);
 		button_applications.setEnabled(!lock && !checkbox_global_proxy.isChecked());
 		button_restart.setEnabled(!lock);
@@ -164,7 +171,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		edittext_server_port.setEnabled(!lock);
 		edittext_bypass_addresses.setEnabled(!lock);
 		edittext_password.setEnabled(!lock);
-		edittext_extra_configs.setEnabled(!lock);
+		edittext_extra_configs.setEnabled(!lock && checkbox_extra_configs_edit.isChecked());
 	}
 
 	private void savePrefs() {
