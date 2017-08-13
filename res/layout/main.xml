@@ -7,7 +7,7 @@
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:padding="5dp" >
+		android:padding="2dp" >
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -87,15 +87,22 @@
 				android:layout_weight="1"
 				android:text="@string/applications" />
 		</LinearLayout>
-		<Button
-			android:id="@+id/restart"
+		<LinearLayout
+			android:orientation="horizontal"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/restart" />
-		<Button
-			android:id="@+id/control"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/control_enable" />
+			android:layout_height="fill_parent" >
+			<Button
+				android:id="@+id/restart"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/restart" />
+			<Button
+				android:id="@+id/control"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/control_enable" />
+		</LinearLayout>
 	</LinearLayout>
 </ScrollView>
