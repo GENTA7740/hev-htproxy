@@ -6,7 +6,7 @@
     <string name="bypass_addresses">Extra Bypass Addresses:</string>
     <string name="password">Password:</string>
     <string name="extra_configs">Extra Configs:</string>
-    <string name="extra_configs_edit">Edit</string>
+    <string name="allow_edit">Allow edit</string>
     <string name="global_proxy">Global proxy</string>
     <string name="applications">Applications</string>
     <string name="restart">Restart services</string>

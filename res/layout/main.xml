@@ -53,23 +53,12 @@
 			android:layout_height="wrap_content"
 			android:singleLine="true"
 			android:inputType="textPassword" />
-		<RelativeLayout
-			android:orientation="horizontal"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" >
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:text="@string/extra_configs"
-				android:singleLine="true" />
-			<CheckBox
-				android:id="@+id/extra_configs_edit"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:text="@string/extra_configs_edit" />
-		</RelativeLayout>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:text="@string/extra_configs"
+			android:singleLine="true" />
 		<EditText
 			android:id="@+id/extra_configs"
 			android:layout_width="fill_parent"
@@ -79,6 +68,12 @@
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" >
+			<CheckBox
+				android:id="@+id/allow_edit"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/allow_edit" />
 			<CheckBox
 				android:id="@+id/global_proxy"
 				android:layout_width="fill_parent"
