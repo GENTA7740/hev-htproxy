@@ -7,6 +7,7 @@ package hev.htproxy;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Iterator;
 import android.util.SparseBooleanArray;
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -32,6 +33,14 @@ public class AppListActivity extends ListActivity
 
 		PackageManager pm = getPackageManager();
 		List<PackageInfo> pkginfos = pm.getInstalledPackages(0);
+		Iterator<PackageInfo> iter = pkginfos.iterator();
+		while (iter.hasNext()) {
+			if (iter.next().packageName.equals(getPackageName())) {
+				iter.remove();
+				break;
+			}
+		}
+
 		AppArrayAdapter adapter = new AppArrayAdapter(this, pkginfos.toArray(new PackageInfo[0]));
 		setListAdapter(adapter);
 
