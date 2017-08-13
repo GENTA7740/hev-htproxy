@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Comparator;
+import java.util.Collections;
 import android.util.SparseBooleanArray;
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -40,6 +42,17 @@ public class AppListActivity extends ListActivity
 				break;
 			}
 		}
+		Collections.sort(pkginfos, new Comparator<PackageInfo>() {
+			public int compare(PackageInfo a, PackageInfo b) {
+				String aLabel, bLabel;
+				PackageManager pm = getPackageManager();
+				aLabel = a.applicationInfo.loadLabel(pm).toString();
+				bLabel = b.applicationInfo.loadLabel(pm).toString();
+				if (aLabel.equals(bLabel))
+				  return 0;
+				return aLabel.compareTo(bLabel);
+			}
+		});
 
 		AppArrayAdapter adapter = new AppArrayAdapter(this, pkginfos.toArray(new PackageInfo[0]));
 		setListAdapter(adapter);
