@@ -73,8 +73,8 @@ public class RedirectManager {
 			cmds[i++] = cmd_iptables + "-N HTPROXY";
 			cmds[i++] = cmd_iptables + "-I OUTPUT -j HTPROXY";
 		}
-		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d " +
-			prefs.getServerAddress() + "/32 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -m owner --uid-owner " +
+			Integer.toString(android.os.Process.myUid()) + " -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 0.0.0.0/8 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 10.0.0.0/8 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 127.0.0.0/8 -j RETURN";
