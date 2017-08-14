@@ -1,0 +1,3 @@
+[submodule "jni/hev-socks5-tproxy"]
+	path = jni/hev-socks5-tproxy
+	url = git://github.com/heiher/hev-socks5-tproxy
