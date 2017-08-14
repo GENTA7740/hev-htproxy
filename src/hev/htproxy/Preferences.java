@@ -22,6 +22,16 @@ public class Preferences
 	public static final String EXTRA_CONFIGS = "ExtraConfigs";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
+	private static final String EXTRA_CONFIGS_DEFAULT = "[HTTP]\n" +
+		"Request=POST /zh-cn HTTP/1.1\\r\\n" +
+			"Host: www.microsoft.com\\r\\n" +
+			"Content-Type: application/octet-stream\\r\\n" +
+			"Connection: keep-alive\\r\\n\\r\\n\n" +
+		"Response=HTTP/1.1 200 OK\\r\\n" +
+			"Server: Microsoft-IIS/8.5\\r\\n" +
+			"Content-Type: application/octet-stream\\r\\n" +
+			"Connection: keep-alive\\r\\n\\r\\n";
+
 	private SharedPreferences prefs;
 
 	public Preferences(Context context) {
@@ -99,7 +109,7 @@ public class Preferences
 	}
 
 	public String getExtraConfigs() {
-		return prefs.getString(EXTRA_CONFIGS, "");
+		return prefs.getString(EXTRA_CONFIGS, EXTRA_CONFIGS_DEFAULT);
 	}
 
 	public void setExtraConfigs(String extra_configs) {
