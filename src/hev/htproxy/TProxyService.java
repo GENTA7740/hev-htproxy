@@ -7,15 +7,20 @@ package hev.htproxy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Set;
 import android.app.Service;
 import android.app.Notification;
 import android.app.Notification.Builder;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Context;
+import android.content.BroadcastReceiver;
 import android.os.IBinder;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Process;
+import android.net.ConnectivityManager;
 
 public class TProxyService extends Service {
 	private static native void Socks5StartService(String config_path);
@@ -24,12 +29,26 @@ public class TProxyService extends Service {
 	private static native void TProxyStartService(String config_path);
 	private static native void TProxyStopService();
 
+	private static native void DnsProxyStartService(String socket_path);
+	private static native void DnsProxyStopService();
+	private static native void DnsProxyResetResolver();
+	private static native void DnsProxySetResolverProxy(String dns1, String dns2);
+	private static native void DnsProxySetProxyUids(int[] uids, int last_uid);
+
 	private boolean isRunning = false;
 	private final Messenger mMessenger = new Messenger(new MessageHandler());
+
+	private final BroadcastReceiver network_state_receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			resetResolver();
+		}
+	};
 
 	public class MessageHandler extends Handler {
 		public static final int TYPE_START = 1;
 		public static final int TYPE_STOP = 2;
+		public static final int TYPE_RESET_PROXY_UIDS = 3;
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -40,6 +59,9 @@ public class TProxyService extends Service {
 			case TYPE_STOP:
 				stopService();
 				break;
+			case TYPE_RESET_PROXY_UIDS:
+				resetProxyUids();
+				break;
 			default:
 				super.handleMessage(msg);
 			}
@@ -49,6 +71,7 @@ public class TProxyService extends Service {
 	static {
 		System.loadLibrary("hev-socks5-client");
 		System.loadLibrary("hev-socks5-tproxy");
+		System.loadLibrary("hev-dns-proxy-jni");
 	}
 
 	@Override
@@ -124,6 +147,18 @@ public class TProxyService extends Service {
 		}
 		TProxyStartService(tproxy_file.getAbsolutePath());
 
+		/* DnsProxy */
+		File dns_proxy_file = new File(getFilesDir(), "dnsproxyd");
+		String dns_proxy_path = dns_proxy_file.getAbsolutePath();
+		prefs.setDnsProxyPath(dns_proxy_path);
+		DnsProxySetResolverProxy(prefs.getProxyDns1Address(), prefs.getProxyDns2Address());
+		/* Reset proxy uids before startService */
+		resetProxyUids();
+		DnsProxyStartService(dns_proxy_path);
+
+		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(network_state_receiver, filter);
+
 		Notification notify = new Notification.Builder(this)
 			.setContentTitle(getString(R.string.app_name))
 			.setSmallIcon(android.R.drawable.sym_def_app_icon)
@@ -139,6 +174,11 @@ public class TProxyService extends Service {
 
 		stopForeground(true);
 
+		unregisterReceiver(network_state_receiver);
+
+		/* DnsProxy */
+		DnsProxyStopService();
+
 		/* TProxy */
 		TProxyStopService();
 
@@ -146,6 +186,22 @@ public class TProxyService extends Service {
 		Socks5StopService();
 
 		isRunning = false;
+	}
+
+	public void resetResolver() {
+		DnsProxyResetResolver();
+	}
+
+	public void resetProxyUids() {
+		Preferences prefs = new Preferences(this);
+		Set<String> uids = prefs.getUIDs();
+		int i = 0, proxy_uids[] = new int[uids.size()];
+
+		for (String uid : uids) {
+			proxy_uids[i++] = Integer.parseInt(uid);
+		}
+
+		DnsProxySetProxyUids(proxy_uids, Process.LAST_APPLICATION_UID);
 	}
 }
 
