@@ -141,10 +141,14 @@ public class RedirectManager {
 		boolean retValue = true;
 		int type = enable ? TYPE_APPEND : TYPE_DELETE;
 		String[] cmds = generateCmds(type, context);
-		for (String cmd : cmds)
-		  retValue = (0 == runSuperCmd(cmd)) ? true : false;
+		for (String cmd : cmds) {
+			if (0 != runSuperCmd(cmd)) {
+				retValue = false;
+				break;
+			}
+		}
 
-		/* enable failed, clear */
+		/* Enable failed, clear */
 		if (enable && !retValue) {
 			cmds = generateCmds(TYPE_DELETE, context);
 			for (String cmd : cmds)
