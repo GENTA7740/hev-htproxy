@@ -18,6 +18,7 @@ public class RedirectManager {
 	private static final int TYPE_DELETE = 3;
 
 	private static final String cmd_iptables = "iptables -t nat ";
+	private static final String netd_dnsproxy_path = "/dev/socket/dnsproxyd";
 
 	public static int runSuperCmd(String cmd) {
 		ProcessBuilder pb = new ProcessBuilder();
@@ -134,6 +135,10 @@ public class RedirectManager {
 			  return false;
 		}
 
+		/* Ensure permissions */
+		runSuperCmd("chown :inet " + netd_dnsproxy_path);
+		runSuperCmd("chmod 0660 " + netd_dnsproxy_path);
+
 		return true;
 	}
 
@@ -153,6 +158,29 @@ public class RedirectManager {
 			cmds = generateCmds(TYPE_DELETE, context);
 			for (String cmd : cmds)
 			  runSuperCmd(cmd);
+		}
+
+		/* DnsProxy */
+		if (retValue) {
+			if (enable) {
+				Preferences prefs = new Preferences(context);
+
+				/* Workaround: Disable SELinux */
+				if (0 == runSuperCmd("setenforce 0")) {
+					runSuperCmd("mv " + netd_dnsproxy_path + " " +
+							netd_dnsproxy_path + ".netd");
+					runSuperCmd("ln -sf " + prefs.getDnsProxyPath() + " " +
+							netd_dnsproxy_path);
+					runSuperCmd("chown :inet " + netd_dnsproxy_path);
+					runSuperCmd("chmod 0660 " + netd_dnsproxy_path);
+				}
+			} else {
+				runSuperCmd("mv " + netd_dnsproxy_path + ".netd " +
+						netd_dnsproxy_path);
+
+				/* Workaround: Enable SELinux */
+				runSuperCmd("setenforce 1");
+			}
 		}
 
 		return (enable) ? retValue : true;
