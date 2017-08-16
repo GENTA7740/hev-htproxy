@@ -20,6 +20,7 @@ public class Preferences
 	public static final String APPLICATIONS = "Applications";
 	public static final String UIDS = "UIDs";
 	public static final String EXTRA_CONFIGS = "ExtraConfigs";
+	public static final String DNS_PROXY_PATH = "DnsProxyPath";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
 	private static final String EXTRA_CONFIGS_DEFAULT = "[HTTP]\n" +
@@ -115,6 +116,16 @@ public class Preferences
 	public void setExtraConfigs(String extra_configs) {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(EXTRA_CONFIGS, extra_configs);
+		editor.commit();
+	}
+
+	public String getDnsProxyPath() {
+		return prefs.getString(DNS_PROXY_PATH, "");
+	}
+
+	public void setDnsProxyPath(String path) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(DNS_PROXY_PATH, path);
 		editor.commit();
 	}
 
