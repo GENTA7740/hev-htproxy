@@ -4,3 +4,6 @@
 [submodule "jni/hev-dns-proxy"]
 	path = jni/hev-dns-proxy
 	url = git://github.com/heiher/hev-dns-proxy
+[submodule "jni/sepolicy-inject"]
+	path = jni/sepolicy-inject
+	url = git://github.com/heiher/sepolicy-inject
