@@ -157,6 +157,14 @@ public class MainActivity extends Activity implements View.OnClickListener
 				  redir_enabled = false;
 			} else {
 				savePrefs();
+				if (mTProxyService != null) {
+					Message msg = Message.obtain(null,
+						TProxyService.MessageHandler.TYPE_RESET_PROXY_UIDS);
+					try {
+						mTProxyService.send(msg);
+					} catch (RemoteException e) {
+					}
+				}
 				if (RedirectManager.setEnabled(true, this))
 				  redir_enabled = true;
 			}
