@@ -64,7 +64,7 @@ public class RedirectManager {
 			cmds_size += 2;
 		} else {
 			Set<String> uids = prefs.getUIDs();
-			cmds_size += uids.size() * 2;
+			cmds_size += 2 + uids.size();
 		}
 
 		cmds_size += (type != TYPE_CHECK) ? 2 : 0;
@@ -93,12 +93,17 @@ public class RedirectManager {
 				" -j REDIRECT --to-port " +
 				Integer.toString(prefs.getTProxyPort());
 		} else {
+			cmds[i++] = cmd_iptables + cmd_type_dns + "HTPROXY -d " +
+				prefs.getProxyDns1Address() + "/32 -p udp --dport 53 "
+				+ " -j REDIRECT --to-port " +
+				Integer.toString(prefs.getDNSFwdPort());
+			cmds[i++] = cmd_iptables + cmd_type_dns + "HTPROXY -d " +
+				prefs.getProxyDns2Address() + "/32 -p udp --dport 53 "
+				+ " -j REDIRECT --to-port " +
+				Integer.toString(prefs.getDNSFwdPort());
 			Set<String> uids = prefs.getUIDs();
 			for (String uid : uids) {
 				String owner = "-m owner --uid-owner " + uid;
-				cmds[i++] = cmd_iptables + cmd_type_dns + "HTPROXY -p udp --dport 53 "
-					+ owner + " -j REDIRECT --to-port " +
-					Integer.toString(prefs.getDNSFwdPort());
 				cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p tcp " + owner +
 					" -j REDIRECT --to-port " +
 					Integer.toString(prefs.getTProxyPort());
