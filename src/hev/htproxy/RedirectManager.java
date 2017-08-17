@@ -140,8 +140,7 @@ public class RedirectManager {
 			if (enable) {
 				Preferences prefs = new Preferences(context);
 
-				/* Workaround: Disable SELinux */
-				if (0 == SuperRunner.runCmd("setenforce 0")) {
+				if (SepolicyInjecter.inject(context) == 0) {
 					SuperRunner.runCmd("mv " + netd_dnsproxy_path + " " +
 							netd_dnsproxy_path + ".netd");
 					SuperRunner.runCmd("ln -sf " + prefs.getDnsProxyPath() + " " +
@@ -153,8 +152,7 @@ public class RedirectManager {
 				SuperRunner.runCmd("mv " + netd_dnsproxy_path + ".netd " +
 						netd_dnsproxy_path);
 
-				/* Workaround: Enable SELinux */
-				SuperRunner.runCmd("setenforce 1");
+				SepolicyInjecter.restore(context);
 			}
 		}
 
