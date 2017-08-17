@@ -5,11 +5,6 @@
 package hev.htproxy;
 
 import java.util.Set;
-import java.lang.Process;
-import java.lang.ProcessBuilder;
-import java.lang.InterruptedException;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import android.content.Context;
 
 public class RedirectManager {
@@ -19,26 +14,6 @@ public class RedirectManager {
 
 	private static final String cmd_iptables = "iptables -t nat ";
 	private static final String netd_dnsproxy_path = "/dev/socket/dnsproxyd";
-
-	public static int runSuperCmd(String cmd) {
-		ProcessBuilder pb = new ProcessBuilder();
-		int exitValue = -1;
-
-		try {
-			pb.command("su", "-c", cmd);
-			Process p = pb.start();
-			p.waitFor();
-			BufferedInputStream in = new BufferedInputStream(p.getErrorStream());
-			exitValue = p.exitValue();
-			if (0 < in.available())
-			  exitValue |= Integer.MIN_VALUE;
-			p.destroy();
-		} catch (IOException e) {
-		} catch (InterruptedException e) {
-		}
-
-		return exitValue;
-	}
 
 	public static String[] generateCmds(int type, Context context) {
 		String cmd_type, cmd_type_dns;
@@ -120,9 +95,9 @@ public class RedirectManager {
 	}
 
 	public static boolean isSupported() {
-		if (0 != runSuperCmd(cmd_iptables + "-I OUTPUT 1 -p tcp -j REDIRECT"))
+		if (0 != SuperRunner.runCmd(cmd_iptables + "-I OUTPUT 1 -p tcp -j REDIRECT"))
 		  return false;
-		if (0 != runSuperCmd(cmd_iptables + "-D OUTPUT 1"))
+		if (0 != SuperRunner.runCmd(cmd_iptables + "-D OUTPUT 1"))
 		  return false;
 
 		return true;
@@ -131,13 +106,13 @@ public class RedirectManager {
 	public static boolean isEnabled(Context context) {
 		String[] cmds = generateCmds(TYPE_CHECK, context);
 		for (String cmd : cmds) {
-			if (0 != runSuperCmd(cmd))
+			if (0 != SuperRunner.runCmd(cmd))
 			  return false;
 		}
 
 		/* Ensure permissions */
-		runSuperCmd("chown :inet " + netd_dnsproxy_path);
-		runSuperCmd("chmod 0660 " + netd_dnsproxy_path);
+		SuperRunner.runCmd("chown :inet " + netd_dnsproxy_path);
+		SuperRunner.runCmd("chmod 0660 " + netd_dnsproxy_path);
 
 		return true;
 	}
@@ -147,7 +122,7 @@ public class RedirectManager {
 		int type = enable ? TYPE_APPEND : TYPE_DELETE;
 		String[] cmds = generateCmds(type, context);
 		for (String cmd : cmds) {
-			if (0 != runSuperCmd(cmd)) {
+			if (0 != SuperRunner.runCmd(cmd)) {
 				retValue = false;
 				break;
 			}
@@ -157,7 +132,7 @@ public class RedirectManager {
 		if (enable && !retValue) {
 			cmds = generateCmds(TYPE_DELETE, context);
 			for (String cmd : cmds)
-			  runSuperCmd(cmd);
+			  SuperRunner.runCmd(cmd);
 		}
 
 		/* DnsProxy */
@@ -166,20 +141,20 @@ public class RedirectManager {
 				Preferences prefs = new Preferences(context);
 
 				/* Workaround: Disable SELinux */
-				if (0 == runSuperCmd("setenforce 0")) {
-					runSuperCmd("mv " + netd_dnsproxy_path + " " +
+				if (0 == SuperRunner.runCmd("setenforce 0")) {
+					SuperRunner.runCmd("mv " + netd_dnsproxy_path + " " +
 							netd_dnsproxy_path + ".netd");
-					runSuperCmd("ln -sf " + prefs.getDnsProxyPath() + " " +
+					SuperRunner.runCmd("ln -sf " + prefs.getDnsProxyPath() + " " +
 							netd_dnsproxy_path);
-					runSuperCmd("chown :inet " + netd_dnsproxy_path);
-					runSuperCmd("chmod 0660 " + netd_dnsproxy_path);
+					SuperRunner.runCmd("chown :inet " + netd_dnsproxy_path);
+					SuperRunner.runCmd("chmod 0660 " + netd_dnsproxy_path);
 				}
 			} else {
-				runSuperCmd("mv " + netd_dnsproxy_path + ".netd " +
+				SuperRunner.runCmd("mv " + netd_dnsproxy_path + ".netd " +
 						netd_dnsproxy_path);
 
 				/* Workaround: Enable SELinux */
-				runSuperCmd("setenforce 1");
+				SuperRunner.runCmd("setenforce 1");
 			}
 		}
 
