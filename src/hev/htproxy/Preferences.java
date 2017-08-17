@@ -162,4 +162,12 @@ public class Preferences
 	public int getDNSFwdPort() {
 		return 5300;
 	}
+
+	public String getProxyDns1Address() {
+		return "8.8.8.8";
+	}
+
+	public String getProxyDns2Address() {
+		return "8.8.4.4";
+	}
 }
