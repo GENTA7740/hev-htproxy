@@ -13,6 +13,7 @@ public class SepolicyInjecter {
 	private static native int SepolicyInject(String[] args);
 
 	private static final String SELINUX_FS_PATH = "/sys/fs/selinux/";
+	private static boolean isInject = false;
 
 	static {
 		System.loadLibrary("sepolicy-inject-jni");
@@ -22,10 +23,9 @@ public class SepolicyInjecter {
 		return SuperRunner.runCmd("dd if=" + src + " of=" + dst + " bs=" + bs, false);
 	}
 
-	public static int inject(Context context) {
-		File sepolicy_file = new File(context.getFilesDir(), "sepolicy");
-		String sepolicy_path = sepolicy_file.getAbsolutePath();
+	private static int makeInject(File sepolicy_file) {
 		int ret = 0;
+		String sepolicy_path = sepolicy_file.getAbsolutePath();
 
 		try {
 			sepolicy_file.createNewFile();
@@ -60,6 +60,19 @@ public class SepolicyInjecter {
 			args[12] = sepolicy_path + "_inject";
 
 			ret = SepolicyInject(args);
+		}
+
+		return ret;
+	}
+
+	public static int inject(Context context) {
+		File sepolicy_file = new File(context.getFilesDir(), "sepolicy");
+		String sepolicy_path = sepolicy_file.getAbsolutePath();
+		int ret = 0;
+
+		if (!isInject) {
+			ret = makeInject(sepolicy_file);
+			isInject = true;
 		}
 
 		if (ret == 0) {
