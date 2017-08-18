@@ -9,10 +9,8 @@ git clone git://github.com/heiher/hev-htproxy
 cd hev-htproxy
 git submodule init
 git submodule update
-cd jni/hev-socks5-tproxy
-git submodule init
-git submodule update
-cd ../../
+git submodule foreach git submodule init
+git submodule foreach git submodule update
 nkd-build
 
 android update project -n hev.htproxy -p . -t 1 # android-21+
