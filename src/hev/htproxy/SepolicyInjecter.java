@@ -18,6 +18,10 @@ public class SepolicyInjecter {
 		System.loadLibrary("sepolicy-inject-jni");
 	}
 
+	private static int runDdCmd(String src, String dst, String bs) {
+		return SuperRunner.runCmd("dd if=" + src + " of=" + dst + " bs=" + bs, false);
+	}
+
 	public static int inject(Context context) {
 		File sepolicy_file = new File(context.getFilesDir(), "sepolicy");
 		String sepolicy_path = sepolicy_file.getAbsolutePath();
@@ -30,8 +34,7 @@ public class SepolicyInjecter {
 		}
 
 		if (ret == 0) {
-			ret = SuperRunner.runCmd("dd if=" + SELINUX_FS_PATH +
-					"policy of=" + sepolicy_path + " bs=1m", false);
+			ret = runDdCmd(SELINUX_FS_PATH + "policy", sepolicy_path, "8m");
 		}
 
 		if (ret == 0) {
@@ -60,8 +63,7 @@ public class SepolicyInjecter {
 		}
 
 		if (ret == 0) {
-			ret = SuperRunner.runCmd("dd if=" + sepolicy_path + "_inject of=" +
-					SELINUX_FS_PATH + "load bs=1m", false);
+			ret = runDdCmd(sepolicy_path + "_inject", SELINUX_FS_PATH + "load", "8m");
 		}
 
 		Toast.makeText(context, (ret == 0) ? "SELinux policy injected" :
@@ -74,8 +76,7 @@ public class SepolicyInjecter {
 		File sepolicy_file = new File(context.getFilesDir(), "sepolicy");
 		String sepolicy_path = sepolicy_file.getAbsolutePath();
 
-		int ret = SuperRunner.runCmd("dd if=" + sepolicy_path +
-				" of=" + SELINUX_FS_PATH + "load bs=1m", false);
+		int ret = runDdCmd(sepolicy_path, SELINUX_FS_PATH + "load", "8m");
 
 		Toast.makeText(context, (ret == 0) ? "SELinux policy restored" :
 				"Restore SELinux policy error!", Toast.LENGTH_SHORT).show();
