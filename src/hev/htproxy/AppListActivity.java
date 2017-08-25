@@ -13,9 +13,17 @@ import java.util.Collections;
 import android.util.SparseBooleanArray;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.ApplicationInfo;
@@ -26,10 +34,24 @@ import hev.htproxy.AppArrayAdapter;
 public class AppListActivity extends ListActivity
 {
 	private Preferences prefs;
+	private Messenger mTProxyService = null;
+
+	private ServiceConnection mTProxyConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mTProxyService = new Messenger(service);
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			mTProxyService = null;
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		bindService(new Intent(this, TProxyService.class),
+				mTProxyConnection, Context.BIND_AUTO_CREATE);
 
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
@@ -89,6 +111,17 @@ public class AppListActivity extends ListActivity
 
 		prefs.setApplications(applications);
 		prefs.setUIDs(uids);
+
+		if (mTProxyService != null) {
+			Message msg = Message.obtain(null,
+				TProxyService.MessageHandler.TYPE_RESET_PROXY_UIDS);
+			try {
+				mTProxyService.send(msg);
+			} catch (RemoteException e) {
+			}
+		}
+
+		unbindService(mTProxyConnection);
 
 		super.onDestroy();
 	}
