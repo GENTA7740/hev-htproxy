@@ -93,25 +93,25 @@ public class MainActivity extends Activity implements View.OnClickListener
 		startService(i);
 
 		/* is Supported */
-		button_control.setEnabled(false);
-		if (RedirectManager.isSupported())
-		  button_control.setEnabled(true);
-		else
-		  prefs.setHTProxyEnabled(false);
-		/* is Enabled */
-		boolean redir_enabled = RedirectManager.isEnabled(this);
-		if (prefs.getHTProxyEnabled()) {
-			if (!redir_enabled) {
-				if (RedirectManager.setEnabled(true, this))
-				  redir_enabled = true;
+		if (RedirectManager.isSupported()) {
+			button_control.setEnabled(true);
+			/* is Enabled */
+			boolean redir_enabled = RedirectManager.isEnabled(this);
+			if (prefs.getHTProxyEnabled()) {
+				if (!redir_enabled) {
+					if (RedirectManager.setEnabled(true, this))
+					  redir_enabled = true;
+				}
+			} else {
+				if (redir_enabled) {
+					if (RedirectManager.setEnabled(false, this))
+					  redir_enabled = false;
+				}
 			}
+			lockUI(redir_enabled);
 		} else {
-			if (redir_enabled) {
-				if (RedirectManager.setEnabled(false, this))
-				  redir_enabled = false;
-			}
+			button_control.setEnabled(false);
 		}
-		lockUI(redir_enabled);
 	}
 
 	@Override
