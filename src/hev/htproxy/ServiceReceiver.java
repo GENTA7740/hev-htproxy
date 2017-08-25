@@ -17,14 +17,18 @@ public class ServiceReceiver extends BroadcastReceiver {
 			Intent i = new Intent(context, TProxyService.class);
 			context.startService(i);
 
-			boolean redir_enabled = RedirectManager.isEnabled(context);
+			/* is Supported */
 			Preferences prefs = new Preferences(context);
-			if (prefs.getHTProxyEnabled()) {
-				if (!redir_enabled)
-				  RedirectManager.setEnabled(true, context);
-			} else {
-				if (redir_enabled)
-				  RedirectManager.setEnabled(false, context);
+			if (RedirectManager.isSupported()) {
+				/* is Enabled */
+				boolean redir_enabled = RedirectManager.isEnabled(context);
+				if (prefs.getHTProxyEnabled()) {
+					if (!redir_enabled)
+					  RedirectManager.setEnabled(true, context);
+				} else {
+					if (redir_enabled)
+					  RedirectManager.setEnabled(false, context);
+				}
 			}
 		}
 	}
