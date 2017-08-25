@@ -52,6 +52,9 @@ public class MainActivity extends Activity implements View.OnClickListener
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		bindService(new Intent(this, TProxyService.class),
+				mTProxyConnection, Context.BIND_AUTO_CREATE);
+
 		prefs = new Preferences(this);
 		setContentView(R.layout.main);
 
@@ -112,22 +115,10 @@ public class MainActivity extends Activity implements View.OnClickListener
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-
-		bindService(new Intent(this, TProxyService.class), mTProxyConnection, Context.BIND_AUTO_CREATE);
-	}
-
-	@Override
-	protected void onStop() {
-		unbindService(mTProxyConnection);
-
-		super.onStop();
-	}
-
-	@Override
 	protected void onDestroy() {
 		savePrefs();
+
+		unbindService(mTProxyConnection);
 
 		super.onDestroy();
 	}
