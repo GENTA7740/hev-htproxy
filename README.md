@@ -11,7 +11,7 @@ git submodule init
 git submodule update
 git submodule foreach git submodule init
 git submodule foreach git submodule update
-nkd-build
+ndk-build
 
 android update project -n hev.htproxy -p . -t 1 # android-21+
 ant debug
