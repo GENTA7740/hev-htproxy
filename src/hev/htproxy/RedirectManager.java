@@ -40,7 +40,7 @@ public class RedirectManager {
 			cmds_size += 2;
 		} else {
 			Set<String> uids = prefs.getUIDs();
-			cmds_size += 2 + uids.size();
+			cmds_size += 2 + uids.size() * 2;
 		}
 
 		cmds_size += (type != TYPE_CHECK) ? 2 : 0;
@@ -83,6 +83,9 @@ public class RedirectManager {
 				cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p tcp " + owner +
 					" -j REDIRECT --to-port " +
 					Integer.toString(prefs.getTProxyPort());
+				cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -p udp --dport 53 " +
+					owner + " -j REDIRECT --to-port " +
+					Integer.toString(prefs.getDNSFwdPort());
 			}
 		}
 
