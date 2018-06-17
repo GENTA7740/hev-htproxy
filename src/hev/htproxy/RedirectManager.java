@@ -52,11 +52,8 @@ public class RedirectManager {
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -m owner --uid-owner " +
 			Integer.toString(android.os.Process.myUid()) + " -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 0.0.0.0/8 -j RETURN";
-		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 10.0.0.0/8 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 127.0.0.0/8 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 169.254.0.0/16 -j RETURN";
-		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 172.16.0.0/12 -j RETURN";
-		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 192.168.0.0/16 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 224.0.0.0/4 -j RETURN";
 		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 240.0.0.0/4 -j RETURN";
 		for (String addr : bypass_addresses)
@@ -88,6 +85,9 @@ public class RedirectManager {
 					Integer.toString(prefs.getDNSFwdPort());
 			}
 		}
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 10.0.0.0/8 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 172.16.0.0/12 -j RETURN";
+		cmds[i++] = cmd_iptables + cmd_type + "HTPROXY -d 192.168.0.0/16 -j RETURN";
 
 		if (type == TYPE_DELETE) {
 			cmds[i++] = cmd_iptables + cmd_type + "OUTPUT -j HTPROXY";
