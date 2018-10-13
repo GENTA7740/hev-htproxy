@@ -11,6 +11,7 @@ import java.util.Set;
 import android.app.Service;
 import android.app.Notification;
 import android.app.Notification.Builder;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Context;
@@ -159,9 +160,12 @@ public class TProxyService extends Service {
 		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(network_state_receiver, filter);
 
+		Intent i = new Intent(this, TProxyService.class);
+		PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
 		Notification notify = new Notification.Builder(this)
 			.setContentTitle(getString(R.string.app_name))
 			.setSmallIcon(android.R.drawable.sym_def_app_icon)
+			.setContentIntent(pi)
 			.build();
 		startForeground(1, notify);
 
