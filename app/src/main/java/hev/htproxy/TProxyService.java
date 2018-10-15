@@ -169,6 +169,9 @@ public class TProxyService extends Service {
 			.build();
 		startForeground(1, notify);
 
+		/* Disable OOM */
+		setOOMAdj(-17);
+
 		isRunning = true;
 	}
 
@@ -189,6 +192,9 @@ public class TProxyService extends Service {
 		/* Socks5 */
 		Socks5StopService();
 
+		/* Enable OOM */
+		setOOMAdj(4);
+
 		isRunning = false;
 	}
 
@@ -206,6 +212,12 @@ public class TProxyService extends Service {
 		}
 
 		DnsProxySetProxyUids(proxy_uids, Process.LAST_APPLICATION_UID);
+	}
+
+	private void setOOMAdj(int value) {
+		int pid = Process.myPid();
+		String cmd = String.format("echo %d > /proc/%d/oom_adj", value, pid);
+		SuperRunner.runCmd(cmd);
 	}
 }
 
