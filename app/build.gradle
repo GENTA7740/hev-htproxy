@@ -41,12 +41,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['src/main/jni/hev-socks5-client/libs']
-        }
-    }
-
     externalNativeBuild {
         ndkBuild {
             path "src/main/jni/Android.mk"
