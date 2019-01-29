@@ -6,6 +6,7 @@ package hev.htproxy;
 
 import java.io.File;
 import java.io.IOException;
+import android.os.Build;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -24,45 +25,43 @@ public class SepolicyInjecter {
 	}
 
 	private static int makeInject(File sepolicy_file) {
-		int ret = 0;
 		String sepolicy_path = sepolicy_file.getAbsolutePath();
 
 		try {
 			sepolicy_file.createNewFile();
 		} catch (IOException e) {
-			ret = -1;
+			return -1;
 		}
 
-		if (ret == 0) {
-			ret = runDdCmd(SELINUX_FS_PATH + "policy", sepolicy_path, "8m");
+		if (runDdCmd(SELINUX_FS_PATH + "policy", sepolicy_path, "8m") != 0) {
+			return -2;
 		}
 
-		if (ret == 0) {
-			int uid = android.os.Process.myUid();
-			ret = SuperRunner.runCmd("chown " + uid + ":" + uid + " " + sepolicy_path);
+		int uid = android.os.Process.myUid();
+		if (SuperRunner.runCmd("chown " + uid + ":" + uid + " " + sepolicy_path) != 0) {
+			return -3;
 		}
 
-		if (ret == 0) {
-			String args[] = new String[13];
-
-			args[0] = "sepolicy-inject";
-			args[1] = "-s";
-			args[2] = "netdomain";
-			args[3] = "-t";
+		String args[] = new String[13];
+		args[0] = "sepolicy-inject";
+		args[1] = "-s";
+		args[2] = "netdomain";
+		args[3] = "-t";
+		if (Build.VERSION.SDK_INT >= 26) {
+			args[4] = "untrusted_app_25";
+		} else {
 			args[4] = "untrusted_app";
-			args[5] = "-c";
-			args[6] = "unix_stream_socket";
-			args[7] = "-p";
-			args[8] = "connectto";
-			args[9] = "-P";
-			args[10] = sepolicy_path;
-			args[11] = "-o";
-			args[12] = sepolicy_path + "_inject";
-
-			ret = SepolicyInject(args);
 		}
+		args[5] = "-c";
+		args[6] = "unix_stream_socket";
+		args[7] = "-p";
+		args[8] = "connectto";
+		args[9] = "-P";
+		args[10] = sepolicy_path;
+		args[11] = "-o";
+		args[12] = sepolicy_path + "_inject";
 
-		return ret;
+		return SepolicyInject(args);
 	}
 
 	public static int inject(Context context) {
