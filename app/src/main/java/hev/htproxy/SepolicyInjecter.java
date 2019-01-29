@@ -24,8 +24,43 @@ public class SepolicyInjecter {
 		return SuperRunner.runCmd("dd if=" + src + " of=" + dst + " bs=" + bs, false);
 	}
 
+	private static int runSeInjectCmd(String src, String dst, String scontext, String tcontext) {
+		String args[] = new String[13];
+
+		args[0] = "sepolicy-inject";
+		args[1] = "-s";
+		args[2] = scontext;
+		args[3] = "-t";
+		args[4] = tcontext;
+		args[5] = "-c";
+		args[6] = "unix_stream_socket";
+		args[7] = "-p";
+		args[8] = "connectto";
+		args[9] = "-P";
+		args[10] = src;
+		args[11] = "-o";
+		args[12] = dst;
+
+		return SepolicyInject(args);
+	}
+
+	private static int runSeInjectCmd(String src, String dst, String scontext) {
+		String args[] = new String[7];
+
+		args[0] = "sepolicy-inject";
+		args[1] = "-Z";
+		args[2] = "untrusted_app";
+		args[3] = "-P";
+		args[4] = src;
+		args[5] = "-o";
+		args[6] = dst;
+
+		return SepolicyInject(args);
+	}
+
 	private static int makeInject(File sepolicy_file) {
 		String sepolicy_path = sepolicy_file.getAbsolutePath();
+		String sepolicy_inject_path = sepolicy_path + "_inject";
 
 		try {
 			sepolicy_file.createNewFile();
@@ -42,26 +77,33 @@ public class SepolicyInjecter {
 			return -3;
 		}
 
-		String args[] = new String[13];
-		args[0] = "sepolicy-inject";
-		args[1] = "-s";
-		args[2] = "netdomain";
-		args[3] = "-t";
-		if (Build.VERSION.SDK_INT >= 26) {
-			args[4] = "untrusted_app_25";
-		} else {
-			args[4] = "untrusted_app";
+		/* allow netdomain untrusted_app:unix_stream_socket connectto; */
+		if (runSeInjectCmd(sepolicy_path, sepolicy_inject_path,
+					"netdomain", "untrusted_app") != 0) {
+			return -4;
 		}
-		args[5] = "-c";
-		args[6] = "unix_stream_socket";
-		args[7] = "-p";
-		args[8] = "connectto";
-		args[9] = "-P";
-		args[10] = sepolicy_path;
-		args[11] = "-o";
-		args[12] = sepolicy_path + "_inject";
 
-		return SepolicyInject(args);
+		if (Build.VERSION.SDK_INT >= 26) {
+			/* allow netdomain untrusted_app_all:unix_stream_socket connectto; */
+			if (runSeInjectCmd(sepolicy_inject_path, sepolicy_inject_path,
+						"netdomain", "untrusted_app_all") != 0) {
+				return -5;
+			}
+
+			/* allow untrusted_app_all untrusted_app_all:unix_stream_socket connectto; */
+			if (runSeInjectCmd(sepolicy_inject_path, sepolicy_inject_path,
+						"untrusted_app_all", "untrusted_app_all") != 0) {
+				return -6;
+			}
+
+			/* FIXME: permissive untrusted_app; */
+			if (runSeInjectCmd(sepolicy_inject_path, sepolicy_inject_path,
+						"untrusted_app") != 0) {
+				return -7;
+			}
+		}
+
+		return 0;
 	}
 
 	public static int inject(Context context) {
