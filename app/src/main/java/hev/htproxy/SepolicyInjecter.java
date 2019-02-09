@@ -24,7 +24,8 @@ public class SepolicyInjecter {
 		return SuperRunner.runCmd("dd if=" + src + " of=" + dst + " bs=" + bs, false);
 	}
 
-	private static int runSeInjectCmd(String src, String dst, String scontext, String tcontext) {
+	private static int runSeInjectCmd(String src, String dst,
+			String scontext, String tcontext, String klass, String perm) {
 		String args[] = new String[13];
 
 		args[0] = "sepolicy-inject";
@@ -33,15 +34,19 @@ public class SepolicyInjecter {
 		args[3] = "-t";
 		args[4] = tcontext;
 		args[5] = "-c";
-		args[6] = "unix_stream_socket";
+		args[6] = klass;
 		args[7] = "-p";
-		args[8] = "connectto";
+		args[8] = perm;
 		args[9] = "-P";
 		args[10] = src;
 		args[11] = "-o";
 		args[12] = dst;
 
 		return SepolicyInject(args);
+	}
+
+	private static int runSeInjectCmd(String src, String dst, String scontext, String tcontext) {
+		return runSeInjectCmd(src, dst, scontext, tcontext, "unix_stream_socket", "connectto");
 	}
 
 	private static int runSeInjectCmd(String src, String dst, String scontext) {
@@ -96,10 +101,17 @@ public class SepolicyInjecter {
 				return -6;
 			}
 
+			/* allow system_server app_data_file:sock_file write; */
+			if (runSeInjectCmd(sepolicy_inject_path, sepolicy_inject_path,
+						"system_server", "app_data_file",
+						"sock_file", "write") != 0) {
+				return -7;
+			}
+
 			/* FIXME: permissive untrusted_app; */
 			if (runSeInjectCmd(sepolicy_inject_path, sepolicy_inject_path,
 						"untrusted_app") != 0) {
-				return -7;
+				return -8;
 			}
 		}
 
