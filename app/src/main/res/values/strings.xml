@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HTProxy</string>
-    <string name="server_address">Server Address:</string>
-    <string name="server_port">Server Port:</string>
+    <string name="servers">Servers:</string>
     <string name="bypass_addresses">Extra Bypass Addresses:</string>
-    <string name="password">Password:</string>
     <string name="extra_configs">Extra Configs:</string>
     <string name="allow_edit">Allow edit</string>
     <string name="global_proxy">Global proxy</string>

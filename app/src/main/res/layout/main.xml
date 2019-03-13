@@ -11,27 +11,13 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/server_address"
+			android:text="@string/servers"
 			android:singleLine="true" />
 		<EditText
-			android:id="@+id/server_address"
+			android:id="@+id/servers"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:inputType="number|numberDecimal"
-			android:digits="0123456789." />
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/server_port"
-			android:singleLine="true" />
-		<EditText
-			android:id="@+id/server_port"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:inputType="number|numberDecimal"
-			android:digits="0123456789" />
+			android:inputType="textMultiLine" />
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -42,17 +28,6 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:inputType="textMultiLine" />
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/password"
-			android:singleLine="true" />
-		<EditText
-			android:id="@+id/password"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:inputType="textPassword" />
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
