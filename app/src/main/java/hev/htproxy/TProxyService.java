@@ -110,10 +110,7 @@ public class TProxyService extends Service {
 				"Workers=4\n" +
 				"Port=" + prefs.getSocks5Port() + "\n" +
 				"ListenAddress=" + prefs.getSocks5Address() + "\n" +
-				"[Srv1]\n" +
-				"Port=" + prefs.getServerPort() + "\n" +
-				"Address=" + prefs.getServerAddress() + "\n" +
-				"Password=" + prefs.getPassword() + "\n" +
+				prefs.getServers() + "\n" +
 				prefs.getExtraConfigs();
 
 			fos.write (socks5_conf.getBytes());
