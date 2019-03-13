@@ -12,10 +12,8 @@ import android.content.SharedPreferences;
 public class Preferences
 {
 	public static final String PREFS_NAME = "Socks5Prefs";
-	public static final String SERVER_ADDRESS = "ServerAddress";
-	public static final String SERVER_PORT = "ServerPort";
+	public static final String SERVERS = "Servers";
 	public static final String BYPASS_ASSRESSES = "BypassAddresses";
-	public static final String PASSWORD = "Password";
 	public static final String GLOBAL_PROXY = "GlobalProxy";
 	public static final String APPLICATIONS = "Applications";
 	public static final String UIDS = "UIDs";
@@ -23,6 +21,10 @@ public class Preferences
 	public static final String DNS_PROXY_PATH = "DnsProxyPath";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
+	private static final String SERVERS_DEFAULT = "[Srv]\n" +
+		"Port=80\n" +
+		"Address=10.0.0.1\n" +
+		"Password=";
 	private static final String EXTRA_CONFIGS_DEFAULT = "[HTTP]\n" +
 		"Request=POST /zh-cn HTTP/1.1\\r\\n" +
 			"Host: www.microsoft.com\\r\\n" +
@@ -39,23 +41,13 @@ public class Preferences
 		prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_MULTI_PROCESS);
 	}
 
-	public String getServerAddress() {
-		return prefs.getString(SERVER_ADDRESS, "10.0.0.1");
+	public String getServers() {
+		return prefs.getString(SERVERS, SERVERS_DEFAULT);
 	}
 
-	public void setServerAddress(String address) {
+	public void setServers(String servers) {
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(SERVER_ADDRESS, address);
-		editor.commit();
-	}
-
-	public int getServerPort() {
-		return prefs.getInt(SERVER_PORT, 80);
-	}
-
-	public void setServerPort(int port) {
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(SERVER_PORT, port);
+		editor.putString(SERVERS, servers);
 		editor.commit();
 	}
 
@@ -66,16 +58,6 @@ public class Preferences
 	public void setBypassAddresses(Set<String> addresses) {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putStringSet(BYPASS_ASSRESSES, addresses);
-		editor.commit();
-	}
-
-	public String getPassword() {
-		return prefs.getString(PASSWORD, "");
-	}
-
-	public void setPassword(String address) {
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(PASSWORD, address);
 		editor.commit();
 	}
 
