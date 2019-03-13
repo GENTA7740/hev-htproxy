@@ -26,10 +26,8 @@ import android.view.View;
 public class MainActivity extends Activity implements View.OnClickListener
 {
 	private Preferences prefs;
-	private EditText edittext_server_address;
-	private EditText edittext_server_port;
+	private EditText edittext_servers;
 	private EditText edittext_bypass_addresses;
-	private EditText edittext_password;
 	private EditText edittext_extra_configs;
 	private CheckBox checkbox_allow_edit;
 	private CheckBox checkbox_global_proxy;
@@ -58,10 +56,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		prefs = new Preferences(this);
 		setContentView(R.layout.main);
 
-		edittext_server_address = (EditText) findViewById(R.id.server_address);
-		edittext_server_port = (EditText) findViewById(R.id.server_port);
+		edittext_servers = (EditText) findViewById(R.id.servers);
 		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
-		edittext_password = (EditText) findViewById(R.id.password);
 		edittext_extra_configs = (EditText) findViewById(R.id.extra_configs);
 		checkbox_allow_edit = (CheckBox) findViewById(R.id.allow_edit);
 		checkbox_global_proxy = (CheckBox) findViewById(R.id.global_proxy);
@@ -69,8 +65,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
 
-		edittext_server_address.setText(prefs.getServerAddress());
-		edittext_server_port.setText(Integer.toString(prefs.getServerPort()));
+		edittext_servers.setText(prefs.getServers());
 		StringBuilder builder = new StringBuilder();
 		for (String addr : prefs.getBypassAddresses()) {
 			if (0 < builder.length())
@@ -78,7 +73,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 			builder.append(addr);
 		}
 		edittext_bypass_addresses.setText(builder.toString());
-		edittext_password.setText(prefs.getPassword());
 		edittext_extra_configs.setText(prefs.getExtraConfigs());
 		checkbox_allow_edit.setOnClickListener(this);
 		checkbox_allow_edit.setChecked(false);
@@ -126,10 +120,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 	public void onClick(View view) {
 		if (view == checkbox_allow_edit) {
 			boolean allow_edit = checkbox_allow_edit.isChecked();
-			edittext_server_address.setEnabled(allow_edit);
-			edittext_server_port.setEnabled(allow_edit);
+			edittext_servers.setEnabled(allow_edit);
 			edittext_bypass_addresses.setEnabled(allow_edit);
-			edittext_password.setEnabled(allow_edit);
 			edittext_extra_configs.setEnabled(allow_edit);
 			checkbox_global_proxy.setEnabled(allow_edit);
 			button_applications.setEnabled(!checkbox_global_proxy.isChecked() && allow_edit);
@@ -167,10 +159,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		button_applications.setEnabled(!lock && allow_edit &&
 						!checkbox_global_proxy.isChecked());
 		button_restart.setEnabled(!lock);
-		edittext_server_address.setEnabled(!lock && allow_edit);
-		edittext_server_port.setEnabled(!lock && allow_edit);
+		edittext_servers.setEnabled(!lock && allow_edit);
 		edittext_bypass_addresses.setEnabled(!lock && allow_edit);
-		edittext_password.setEnabled(!lock && allow_edit);
 		edittext_extra_configs.setEnabled(!lock && allow_edit);
 	}
 
@@ -178,8 +168,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		String[] addrs;
 		Set<String> bypass_addresses = new HashSet<String>();
 
-		prefs.setServerAddress(edittext_server_address.getText().toString());
-		prefs.setServerPort(Integer.parseInt(edittext_server_port.getText().toString()));
+		prefs.setServers(edittext_servers.getText().toString());
 
 		addrs = edittext_bypass_addresses.getText().toString().split("\n");
 		for (String addr : addrs) {
@@ -187,7 +176,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 			  bypass_addresses.add(addr);
 		}
 		prefs.setBypassAddresses(bypass_addresses);
-		prefs.setPassword(edittext_password.getText().toString());
 
 		prefs.setExtraConfigs(edittext_extra_configs.getText().toString());
 		prefs.setGlobalProxy(checkbox_global_proxy.isChecked());
