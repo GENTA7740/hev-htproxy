@@ -98,9 +98,9 @@ public class RedirectManager {
 	}
 
 	public static boolean isSupported() {
-		if (0 != SuperRunner.runCmd(cmd_iptables + "-I OUTPUT 1 -p tcp -j REDIRECT"))
+		if (0 != SuperRunner.runCmd(cmd_iptables + "-A OUTPUT -p tcp -j REDIRECT"))
 		  return false;
-		if (0 != SuperRunner.runCmd(cmd_iptables + "-D OUTPUT 1"))
+		if (0 != SuperRunner.runCmd(cmd_iptables + "-D OUTPUT -p tcp -j REDIRECT"))
 		  return false;
 
 		return true;
