@@ -130,7 +130,7 @@ public class Preferences
 	}
 
 	public String getTProxyAddress() {
-		return "127.0.0.1";
+		return "::";
 	}
 
 	public int getTProxyPort() {
