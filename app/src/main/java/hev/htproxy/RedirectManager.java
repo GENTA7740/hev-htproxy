@@ -52,8 +52,6 @@ public class RedirectManager {
 			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -m owner --uid-owner " +
 					 Integer.toString(android.os.Process.myUid()) + " -j RETURN");
 			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -d ::1/128 -j RETURN");
-			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -d fc00::/7 -j RETURN");
-			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -d fe80::/10 -j RETURN");
 		} else {
 			cmds.add(cmd_iptables + cmd_type + "HTPROXY -m owner --uid-owner " +
 					 Integer.toString(android.os.Process.myUid()) + " -j RETURN");
@@ -128,7 +126,10 @@ public class RedirectManager {
 				}
 			}
 		}
-		if (!isIpv6) {
+		if (isIpv6) {
+			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -d fc00::/7 -j RETURN");
+			cmds.add(cmd_ip6tables + cmd_type + "HTPROXY -d fe80::/10 -j RETURN");
+		} else {
 			cmds.add(cmd_iptables + cmd_type + "HTPROXY -d 10.0.0.0/8 -j RETURN");
 			cmds.add(cmd_iptables + cmd_type + "HTPROXY -d 172.16.0.0/12 -j RETURN");
 			cmds.add(cmd_iptables + cmd_type + "HTPROXY -d 192.168.0.0/16 -j RETURN");
