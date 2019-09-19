@@ -13,32 +13,47 @@
 			android:layout_height="wrap_content"
 			android:text="@string/servers"
 			android:singleLine="true" />
-		<EditText
-			android:id="@+id/servers"
+		<HorizontalScrollView
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textMultiLine" />
+			android:layout_height="wrap_content" >
+			<EditText
+				android:id="@+id/servers"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:scrollHorizontally="true"
+				android:inputType="textMultiLine" />
+		</HorizontalScrollView>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/bypass_addresses"
 			android:singleLine="true" />
-		<EditText
-			android:id="@+id/bypass_addresses"
+		<HorizontalScrollView
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textMultiLine" />
+			android:layout_height="wrap_content" >
+			<EditText
+				android:id="@+id/bypass_addresses"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:scrollHorizontally="true"
+				android:inputType="textMultiLine" />
+		</HorizontalScrollView>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
 			android:text="@string/extra_configs"
 			android:singleLine="true" />
-		<EditText
-			android:id="@+id/extra_configs"
+		<HorizontalScrollView
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textMultiLine" />
+			android:layout_height="wrap_content" >
+			<EditText
+				android:id="@+id/extra_configs"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:scrollHorizontally="true"
+				android:inputType="textMultiLine" />
+		</HorizontalScrollView>
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
