@@ -106,12 +106,12 @@ public class TProxyService extends Service {
 			socks5_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(socks5_file, false);
 
-			String socks5_conf = "[Main]\n" +
-				"Workers=4\n" +
-				"Port=" + prefs.getSocks5Port() + "\n" +
-				"ListenAddress=" + prefs.getSocks5Address() + "\n" +
-				prefs.getServers() + "\n" +
-				prefs.getExtraConfigs();
+			String socks5_conf = "main:\n" +
+				"  workers: 4\n" +
+				"  port: " + prefs.getSocks5Port() + "\n" +
+				"  listen-address: '" + prefs.getSocks5Address() + "'\n" +
+				prefs.getExtraConfigs() + "\n" +
+				prefs.getServers();
 
 			fos.write (socks5_conf.getBytes());
 			fos.close();
@@ -126,17 +126,17 @@ public class TProxyService extends Service {
 			tproxy_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(tproxy_file, false);
 
-			String tproxy_conf = "[Main]\n" +
-				"Workers=4\n" +
-				"[Socks5]\n" +
-				"Port=" + prefs.getSocks5Port() + "\n" +
-				"Address=" + prefs.getSocks5Address() + "\n" +
-				"[TCP]\n" +
-				"Port=" + prefs.getTProxyPort() + "\n" +
-				"ListenAddress=" + prefs.getTProxyAddress() + "\n" +
-				"[DNS]\n" +
-				"Port=" + prefs.getDNSFwdPort() + "\n" +
-				"ListenAddress=" + prefs.getDNSFwdAddress() + "\n";
+			String tproxy_conf = "main:\n" +
+				"  workers: 4\n" +
+				"socks5:\n" +
+				"  port: " + prefs.getSocks5Port() + "\n" +
+				"  address: '" + prefs.getSocks5Address() + "'\n" +
+				"tcp:\n" +
+				"  port: " + prefs.getTProxyPort() + "\n" +
+				"  listen-address: '" + prefs.getTProxyAddress() + "'\n" +
+				"dns:\n" +
+				"  port: " + prefs.getDNSFwdPort() + "\n" +
+				"  listen-address: '" + prefs.getDNSFwdAddress() + "'\n";
 
 			fos.write (tproxy_conf.getBytes());
 			fos.close();
