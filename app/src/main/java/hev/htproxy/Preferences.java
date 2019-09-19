@@ -21,19 +21,22 @@ public class Preferences
 	public static final String DNS_PROXY_PATH = "DnsProxyPath";
 	public static final String ENABLE_HTPROXY = "HTProxyEnabled";
 
-	private static final String SERVERS_DEFAULT = "[Srv]\n" +
-		"Port=80\n" +
-		"Address=10.0.0.1\n" +
-		"Password=";
-	private static final String EXTRA_CONFIGS_DEFAULT = "[HTTP]\n" +
-		"Request=POST /zh-cn HTTP/1.1\\r\\n" +
-			"Host: www.microsoft.com\\r\\n" +
-			"Content-Type: application/octet-stream\\r\\n" +
-			"Connection: keep-alive\\r\\n\\r\\n\n" +
-		"Response=HTTP/1.1 200 OK\\r\\n" +
-			"Server: Microsoft-IIS/8.5\\r\\n" +
-			"Content-Type: application/octet-stream\\r\\n" +
-			"Connection: keep-alive\\r\\n\\r\\n";
+	private static final String SERVERS_DEFAULT = "servers:\n" +
+		"  usa:\n" +
+		"    port: 80\n" +
+		"    address: 10.0.0.1\n" +
+		"    password:" +
+		"    protocol: *generic";
+	private static final String EXTRA_CONFIGS_DEFAULT = "protocols:\n" +
+		"  generic: &generic\n" +
+		"    request: 'POST /zh-cn HTTP/1.1\\r\\n" +
+				"Host: www.microsoft.com\\r\\n" +
+				"Content-Type: application/octet-stream\\r\\n" +
+				"Connection: keep-alive\\r\\n\\r\\n\n'" +
+		"    response: 'HTTP/1.1 200 OK\\r\\n" +
+				"Server: Microsoft-IIS/8.5\\r\\n" +
+				"Content-Type: application/octet-stream\\r\\n" +
+				"Connection: keep-alive\\r\\n\\r\\n'";
 
 	private SharedPreferences prefs;
 
