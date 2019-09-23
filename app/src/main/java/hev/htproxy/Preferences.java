@@ -25,14 +25,14 @@ public class Preferences
 		"  usa:\n" +
 		"    port: 80\n" +
 		"    address: 10.0.0.1\n" +
-		"    password:" +
+		"    password:\n" +
 		"    protocol: *generic";
 	private static final String EXTRA_CONFIGS_DEFAULT = "protocols:\n" +
 		"  generic: &generic\n" +
 		"    request: 'POST /zh-cn HTTP/1.1\\r\\n" +
 				"Host: www.microsoft.com\\r\\n" +
 				"Content-Type: application/octet-stream\\r\\n" +
-				"Connection: keep-alive\\r\\n\\r\\n\n'" +
+				"Connection: keep-alive\\r\\n\\r\\n'\n" +
 		"    response: 'HTTP/1.1 200 OK\\r\\n" +
 				"Server: Microsoft-IIS/8.5\\r\\n" +
 				"Content-Type: application/octet-stream\\r\\n" +
