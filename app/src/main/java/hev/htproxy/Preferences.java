@@ -26,7 +26,8 @@ public class Preferences
 		"    port: 80\n" +
 		"    address: 10.0.0.1\n" +
 		"    password:\n" +
-		"    protocol: *generic";
+		"    protocol: *generic\n" +
+		"    weight: 1\n";
 	private static final String EXTRA_CONFIGS_DEFAULT = "protocols:\n" +
 		"  generic: &generic\n" +
 		"    request: 'POST /zh-cn HTTP/1.1\\r\\n" +
