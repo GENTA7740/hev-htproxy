@@ -1,3 +1,0 @@
-[submodule "app/src/main/jni/sepolicy-inject"]
-	path = app/src/main/jni/sepolicy-inject
-	url = https://gitlab.com/hev/sepolicy-inject
