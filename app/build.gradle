@@ -1,56 +1,56 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+	compileSdkVersion 21
 
-    defaultConfig {
-        applicationId "hev.htproxy"
-        minSdkVersion 21
-        targetSdkVersion 21
-        versionCode 2
-        versionName "11.3"
-        setProperty("archivesBaseName", "$applicationId-$versionName")
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
-        }
-    }
+	defaultConfig {
+		applicationId "hev.htproxy"
+		minSdkVersion 21
+		targetSdkVersion 21
+		versionCode 2
+		versionName "11.3"
+		setProperty("archivesBaseName", "$applicationId-$versionName")
+		ndk {
+			abiFilters "armeabi-v7a", "arm64-v8a"
+		}
+	}
 
-    signingConfigs {
-       release {
-       }
-    }
+	signingConfigs {
+	   release {
+	   }
+	}
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.release
-        }
-    }
+	buildTypes {
+		release {
+			minifyEnabled false
+			signingConfig signingConfigs.release
+		}
+	}
 
-    def propsFile = rootProject.file('gradle.properties')
-    def configName = 'release'
+	def propsFile = rootProject.file('gradle.properties')
+	def configName = 'release'
 
-    if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
-        def props = new Properties()
-        props.load(new FileInputStream(propsFile))
-        if (props!=null && props.containsKey('storeFile')) {
-            android.signingConfigs[configName].storeFile = rootProject.file(props['storeFile'])
-            android.signingConfigs[configName].storePassword = props['storePassword']
-            android.signingConfigs[configName].keyAlias = props['keyAlias']
-            android.signingConfigs[configName].keyPassword = props['keyPassword']
-        }
-    }
+	if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
+		def props = new Properties()
+		props.load(new FileInputStream(propsFile))
+		if (props!=null && props.containsKey('storeFile')) {
+			android.signingConfigs[configName].storeFile = rootProject.file(props['storeFile'])
+			android.signingConfigs[configName].storePassword = props['storePassword']
+			android.signingConfigs[configName].keyAlias = props['keyAlias']
+			android.signingConfigs[configName].keyPassword = props['keyPassword']
+		}
+	}
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ["src/main/jni/hev-socks5-client/libs"]
-        }
-    }
+	sourceSets {
+		main {
+			jniLibs.srcDirs = ["src/main/jni/hev-socks5-client/libs"]
+		}
+	}
 
-    externalNativeBuild {
-        ndkBuild {
-            path "src/main/jni/Android.mk"
-        }
-    }
+	externalNativeBuild {
+		ndkBuild {
+			path "src/main/jni/Android.mk"
+		}
+	}
 }
 
