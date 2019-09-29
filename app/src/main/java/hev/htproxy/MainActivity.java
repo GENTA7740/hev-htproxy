@@ -103,13 +103,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	}
 
 	private void setEditable() {
-		boolean editable = checkbox_editable.isChecked();
+		boolean enable = prefs.getEnable();
+		boolean editable = checkbox_editable.isChecked() && !enable;
 		edittext_configs.setEnabled(editable);
 		checkbox_global.setEnabled(editable);
 		checkbox_ipv4.setEnabled(editable);
 		checkbox_ipv6.setEnabled(editable);
 		button_applications.setEnabled(!checkbox_global.isChecked() && editable);
-		checkbox_editable.setEnabled(!prefs.getEnable());
+		checkbox_editable.setEnabled(!enable);
 	}
 
 	private void savePrefs() {
