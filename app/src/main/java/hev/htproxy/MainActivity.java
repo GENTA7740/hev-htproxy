@@ -1,4 +1,5 @@
-/* MainActivity.java
+/*
+ * MainActivity.java
  * Heiher <r@hev.cc>
  */
 
@@ -8,198 +9,115 @@ import java.util.Set;
 import java.util.HashSet;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.CheckBox;
 import android.widget.Button;
 import android.widget.Scroller;
 import android.text.method.ScrollingMovementMethod;
-import android.view.View;
+import android.net.VpnService;
 
-public class MainActivity extends Activity implements View.OnClickListener
-{
+public class MainActivity extends Activity implements View.OnClickListener {
 	private Preferences prefs;
-	private EditText edittext_servers;
-	private EditText edittext_bypass_addresses;
-	private EditText edittext_extra_configs;
-	private CheckBox checkbox_allow_edit;
-	private CheckBox checkbox_global_proxy;
+	private EditText edittext_configs;
+	private CheckBox checkbox_editable;
+	private CheckBox checkbox_global;
+	private CheckBox checkbox_ipv4;
+	private CheckBox checkbox_ipv6;
 	private Button button_applications;
-	private Button button_restart;
 	private Button button_control;
-	private Messenger mTProxyService = null;
-
-	private ServiceConnection mTProxyConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			mTProxyService = new Messenger(service);
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			mTProxyService = null;
-		}
-	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		bindService(new Intent(this, TProxyService.class),
-				mTProxyConnection, Context.BIND_AUTO_CREATE);
-
-		prefs = new Preferences(this);
 		setContentView(R.layout.main);
+		prefs = new Preferences(this);
 
-		edittext_servers = (EditText) findViewById(R.id.servers);
-		edittext_bypass_addresses = (EditText) findViewById(R.id.bypass_addresses);
-		edittext_extra_configs = (EditText) findViewById(R.id.extra_configs);
-		checkbox_allow_edit = (CheckBox) findViewById(R.id.allow_edit);
-		checkbox_global_proxy = (CheckBox) findViewById(R.id.global_proxy);
+		Intent intent = VpnService.prepare(MainActivity.this);
+		if (intent != null)
+		  startActivityForResult(intent, 0);
+		else
+		  onActivityResult(0, RESULT_OK, null);
+
+		edittext_configs = (EditText) findViewById(R.id.configs);
+		checkbox_editable = (CheckBox) findViewById(R.id.editable);
+		checkbox_global = (CheckBox) findViewById(R.id.global);
+		checkbox_ipv4 = (CheckBox) findViewById(R.id.ipv4);
+		checkbox_ipv6 = (CheckBox) findViewById(R.id.ipv6);
 		button_applications = (Button) findViewById(R.id.applications);
-		button_restart = (Button) findViewById(R.id.restart);
 		button_control = (Button) findViewById(R.id.control);
 
-		edittext_servers.setText(prefs.getServers());
-		StringBuilder builder = new StringBuilder();
-		for (String addr : prefs.getBypassAddresses()) {
-			if (0 < builder.length())
-			  builder.append("\n");
-			builder.append(addr);
-		}
-		edittext_bypass_addresses.setText(builder.toString());
-		edittext_extra_configs.setText(prefs.getExtraConfigs());
-		checkbox_allow_edit.setOnClickListener(this);
-		checkbox_allow_edit.setChecked(false);
-		checkbox_global_proxy.setOnClickListener(this);
-		checkbox_global_proxy.setChecked(prefs.getGlobalProxy());
+		edittext_configs.setText(prefs.getConfigs());
+		checkbox_editable.setOnClickListener(this);
+		checkbox_editable.setChecked(false);
+		checkbox_global.setOnClickListener(this);
+		checkbox_global.setChecked(prefs.getGlobal());
+		checkbox_ipv4.setChecked(prefs.getIpv4());
+		checkbox_ipv6.setChecked(prefs.getIpv6());
 		button_applications.setOnClickListener(this);
-		button_restart.setOnClickListener(this);
 		button_control.setOnClickListener(this);
+		if (prefs.getEnable())
+		  button_control.setText(R.string.control_disable);
 
-		/* tproxy service */
-		Intent i = new Intent(this, TProxyService.class);
-		startService(i);
-
-		/* is Supported */
-		if (RedirectManager.isSupported()) {
-			button_control.setEnabled(true);
-			/* is Enabled */
-			boolean redir_enabled = RedirectManager.isEnabled(this);
-			if (prefs.getHTProxyEnabled()) {
-				if (!redir_enabled) {
-					if (RedirectManager.setEnabled(true, this))
-					  redir_enabled = true;
-				}
-			} else {
-				if (redir_enabled) {
-					if (RedirectManager.setEnabled(false, this))
-					  redir_enabled = false;
-				}
-			}
-			lockUI(redir_enabled);
-		} else {
-			button_control.setEnabled(false);
-		}
+		setEditable();
 	}
 
 	@Override
 	protected void onDestroy() {
 		savePrefs();
-
-		unbindService(mTProxyConnection);
-
 		super.onDestroy();
 	}
 
-	public void onClick(View view) {
-		if (view == checkbox_allow_edit) {
-			boolean allow_edit = checkbox_allow_edit.isChecked();
-			edittext_servers.setEnabled(allow_edit);
-			edittext_bypass_addresses.setEnabled(allow_edit);
-			edittext_extra_configs.setEnabled(allow_edit);
-			checkbox_global_proxy.setEnabled(allow_edit);
-			button_applications.setEnabled(!checkbox_global_proxy.isChecked() && allow_edit);
-		} else if (view == checkbox_global_proxy) {
-			button_applications.setEnabled(!checkbox_global_proxy.isChecked());
-		} else if (view == button_applications) {
-			startActivity(new Intent(this, AppListActivity.class));
-		} else if (view == button_restart) {
-			stopTProxyService();
-			savePrefs();
-			startTProxyService();
-		} else if (view == button_control) {
-			boolean redir_enabled = RedirectManager.isEnabled(this);
-			if (redir_enabled) {
-				if (RedirectManager.setEnabled(false, this))
-				  redir_enabled = false;
-			} else {
-				savePrefs();
-				if (RedirectManager.setEnabled(true, this))
-				  redir_enabled = true;
-			}
-			lockUI(redir_enabled);
-			prefs.setHTProxyEnabled(redir_enabled);
+	@Override
+	protected void onActivityResult(int request, int result, Intent data) {
+		if ((result == RESULT_OK) && prefs.getEnable()) {
+			Intent intent = new Intent(this, TProxyService.class);
+			startService(intent.setAction(TProxyService.ACTION_CONNECT));
 		}
 	}
 
-	private void lockUI(boolean lock) {
-		boolean allow_edit = checkbox_allow_edit.isChecked();
-		if (lock)
-		  button_control.setText(R.string.control_disable);
-		else
-		  button_control.setText(R.string.control_enable);
-		checkbox_allow_edit.setEnabled(!lock);
-		checkbox_global_proxy.setEnabled(!lock && allow_edit);
-		button_applications.setEnabled(!lock && allow_edit &&
-						!checkbox_global_proxy.isChecked());
-		button_restart.setEnabled(!lock);
-		edittext_servers.setEnabled(!lock && allow_edit);
-		edittext_bypass_addresses.setEnabled(!lock && allow_edit);
-		edittext_extra_configs.setEnabled(!lock && allow_edit);
+	public void onClick(View view) {
+		if (view == checkbox_editable) {
+			setEditable();
+		} else if (view == checkbox_global) {
+			button_applications.setEnabled(!checkbox_global.isChecked());
+		} else if (view == button_applications) {
+			startActivity(new Intent(this, AppListActivity.class));
+		} else if (view == button_control) {
+			boolean isEnable = prefs.getEnable();
+			Intent intent = new Intent(this, TProxyService.class);
+			if (isEnable) {
+				button_control.setText(R.string.control_enable);
+				startService(intent.setAction(TProxyService.ACTION_DISCONNECT));
+			} else {
+				button_control.setText(R.string.control_disable);
+				savePrefs();
+				startService(intent.setAction(TProxyService.ACTION_CONNECT));
+			}
+			prefs.setEnable(!isEnable);
+			setEditable();
+		}
+	}
+
+	private void setEditable() {
+		boolean editable = checkbox_editable.isChecked();
+		edittext_configs.setEnabled(editable);
+		checkbox_global.setEnabled(editable);
+		checkbox_ipv4.setEnabled(editable);
+		checkbox_ipv6.setEnabled(editable);
+		button_applications.setEnabled(!checkbox_global.isChecked() && editable);
+		checkbox_editable.setEnabled(!prefs.getEnable());
 	}
 
 	private void savePrefs() {
-		String[] addrs;
-		Set<String> bypass_addresses = new HashSet<String>();
-
-		prefs.setServers(edittext_servers.getText().toString());
-
-		addrs = edittext_bypass_addresses.getText().toString().split("\n");
-		for (String addr : addrs) {
-			if (!addr.isEmpty())
-			  bypass_addresses.add(addr);
-		}
-		prefs.setBypassAddresses(bypass_addresses);
-
-		prefs.setExtraConfigs(edittext_extra_configs.getText().toString());
-		prefs.setGlobalProxy(checkbox_global_proxy.isChecked());
-	}
-
-	private void startTProxyService() {
-		if (null == mTProxyService)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, TProxyService.MessageHandler.TYPE_START);
-			mTProxyService.send(msg);
-		} catch (RemoteException e) {
-		}
-	}
-
-	private void stopTProxyService() {
-		if (null == mTProxyService)
-		  return;
-
-		try {
-			Message msg = Message.obtain(null, TProxyService.MessageHandler.TYPE_STOP);
-			mTProxyService.send(msg);
-		} catch (RemoteException e) {
-		}
+		prefs.setConfigs(edittext_configs.getText().toString());
+		prefs.setGlobal(checkbox_global.isChecked());
+		if (!checkbox_ipv4.isChecked() && !checkbox_ipv4.isChecked())
+		  checkbox_ipv4.setChecked(prefs.getIpv4());
+		prefs.setIpv4(checkbox_ipv4.isChecked());
+		prefs.setIpv6(checkbox_ipv6.isChecked());
 	}
 }
