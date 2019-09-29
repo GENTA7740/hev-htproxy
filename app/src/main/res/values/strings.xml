@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HTProxy</string>
-    <string name="servers">Servers:</string>
-    <string name="bypass_addresses">Extra Bypass Addresses:</string>
-    <string name="extra_configs">Extra Configs:</string>
-    <string name="allow_edit">Allow edit</string>
-    <string name="global_proxy">Global proxy</string>
-    <string name="applications">Applications</string>
-    <string name="restart">Restart services</string>
-    <string name="control_enable">Enable proxy</string>
-    <string name="control_disable">Disable proxy</string>
+	<string name="app_name">HTProxy</string>
+	<string name="configs">Configs:</string>
+	<string name="editable">Editable</string>
+	<string name="global">Global</string>
+	<string name="ipv4">IPv4</string>
+	<string name="ipv6">IPv6</string>
+	<string name="applications">Applications</string>
+	<string name="control_enable">Enable</string>
+	<string name="control_disable">Disable</string>
 </resources>

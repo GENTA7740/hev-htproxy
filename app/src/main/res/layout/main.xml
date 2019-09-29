@@ -11,44 +11,14 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/servers"
-			android:singleLine="true" />
-		<HorizontalScrollView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" >
-			<EditText
-				android:id="@+id/servers"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:scrollHorizontally="true"
-				android:inputType="textMultiLine" />
-		</HorizontalScrollView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/bypass_addresses"
-			android:singleLine="true" />
-		<HorizontalScrollView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" >
-			<EditText
-				android:id="@+id/bypass_addresses"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:scrollHorizontally="true"
-				android:inputType="textMultiLine" />
-		</HorizontalScrollView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
-			android:text="@string/extra_configs"
+			android:text="@string/configs"
 			android:singleLine="true" />
 		<HorizontalScrollView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content" >
 			<EditText
-				android:id="@+id/extra_configs"
+				android:id="@+id/configs"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:scrollHorizontally="true"
@@ -59,34 +29,40 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" >
 			<CheckBox
-				android:id="@+id/allow_edit"
+				android:id="@+id/editable"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/allow_edit" />
+				android:text="@string/editable" />
 			<CheckBox
-				android:id="@+id/global_proxy"
+				android:id="@+id/ipv4"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/global_proxy" />
-			<Button
-				android:id="@+id/applications"
+				android:text="@string/ipv4" />
+			<CheckBox
+				android:id="@+id/ipv6"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/applications" />
+				android:text="@string/ipv6" />
+			<CheckBox
+				android:id="@+id/global"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/global" />
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" >
 			<Button
-				android:id="@+id/restart"
+				android:id="@+id/applications"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/restart" />
+				android:text="@string/applications" />
 			<Button
 				android:id="@+id/control"
 				android:layout_width="fill_parent"
