@@ -1,6 +1,6 @@
 # HevHTProxy
 
-A Socks5 transparent proxy for Android. (require root access)
+A Socks5 transparent proxy for Android.
 
 **Features**
 * Redirect TCP connections.
@@ -20,4 +20,3 @@ gradle assembleDebug
 
 ## License
 LGPL
-
