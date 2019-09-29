@@ -1,4 +1,5 @@
-/* MainActivity.java
+/*
+ * AppArrayAdapter.java
  * Heiher <r@hev.cc>
  */
 
