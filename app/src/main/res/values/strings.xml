@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">HTProxy</string>
-	<string name="configs">Configs:</string>
-	<string name="editable">Editable</string>
-	<string name="global">Global</string>
+	<string name="config_url">Config URL:</string>
+	<string name="username">Username:</string>
+	<string name="password">Password:</string>
 	<string name="ipv4">IPv4</string>
 	<string name="ipv6">IPv6</string>
-	<string name="applications">Applications</string>
+	<string name="global">Global</string>
+	<string name="apps">Apps</string>
+	<string name="update">Update</string>
 	<string name="control_enable">Enable</string>
 	<string name="control_disable">Disable</string>
 </resources>

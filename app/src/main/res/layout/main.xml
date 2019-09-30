@@ -2,73 +2,91 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent" >
+	android:layout_height="fill_parent">
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:padding="2dp" >
+		android:padding="2dp">
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
-			android:text="@string/configs"
-			android:singleLine="true" />
-		<HorizontalScrollView
+			android:text="@string/config_url"
+			android:singleLine="true"/>
+		<EditText
+			android:id="@+id/config_url"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" >
-			<EditText
-				android:id="@+id/configs"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:scrollHorizontally="true"
-				android:inputType="textMultiLine" />
-		</HorizontalScrollView>
+			android:layout_height="wrap_content"
+			android:singleLine="true"/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:text="@string/username"
+			android:singleLine="true"/>
+		<EditText
+			android:id="@+id/username"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:singleLine="true"/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:text="@string/password"
+			android:singleLine="true"/>
+		<EditText
+			android:id="@+id/password"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:inputType="textPassword"/>
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" >
-			<CheckBox
-				android:id="@+id/editable"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/editable" />
+			android:layout_height="fill_parent">
 			<CheckBox
 				android:id="@+id/ipv4"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/ipv4" />
+				android:text="@string/ipv4"/>
 			<CheckBox
 				android:id="@+id/ipv6"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/ipv6" />
+				android:text="@string/ipv6"/>
 			<CheckBox
 				android:id="@+id/global"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/global" />
+				android:text="@string/global"/>
+			<Button
+				android:id="@+id/apps"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/apps"/>
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" >
+			android:layout_height="fill_parent">
 			<Button
-				android:id="@+id/applications"
+				android:id="@+id/update"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/applications" />
+				android:text="@string/update"/>
 			<Button
 				android:id="@+id/control"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="@string/control_enable" />
+				android:text="@string/control_enable"/>
 		</LinearLayout>
 	</LinearLayout>
 </ScrollView>
