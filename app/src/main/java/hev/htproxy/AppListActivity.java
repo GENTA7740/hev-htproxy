@@ -57,10 +57,10 @@ public class AppListActivity extends ListActivity {
 		setListAdapter(adapter);
 
 		prefs = new Preferences(this);
-		Set<String> applications = prefs.getApplications();
+		Set<String> apps = prefs.getApps();
 		for (int i = 0; i < pkginfos.size(); i++) {
 			PackageInfo pkginfo = adapter.getItem(i);
-			if (applications.contains(pkginfo.packageName))
+			if (apps.contains(pkginfo.packageName))
 			  getListView().setItemChecked(i, true);
 		}
 	}
@@ -71,7 +71,7 @@ public class AppListActivity extends ListActivity {
 		AppArrayAdapter adapter = (AppArrayAdapter) list_view.getAdapter();
 		int count = list_view.getCount();
 		SparseBooleanArray sb_array = list_view.getCheckedItemPositions();
-		Set<String> applications = new HashSet<String>();
+		Set<String> apps = new HashSet<String>();
 
 		for (int i = 0; i < count; i++) {
 			if (!sb_array.get(i))
@@ -79,11 +79,10 @@ public class AppListActivity extends ListActivity {
 
 			PackageInfo pkginfo = adapter.getItem(i);
 			ApplicationInfo appinfo = pkginfo.applicationInfo;
-			applications.add(pkginfo.packageName);
+			apps.add(pkginfo.packageName);
 		}
 
-		prefs.setApplications(applications);
-
+		prefs.setApps(apps);
 		super.onDestroy();
 	}
 
