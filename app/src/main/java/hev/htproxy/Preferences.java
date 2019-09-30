@@ -14,30 +14,14 @@ public class Preferences
 {
 	public static final String PREFS_NAME = "Socks5Prefs";
 	public static final String CONFIGS = "Configs";
-	public static final String GLOBAL = "Global";
+	public static final String CONFIG_URL = "ConfigUrl";
+	public static final String USERNAME = "Username";
+	public static final String PASSWORD = "Password";
 	public static final String IPV4 = "Ipv4";
 	public static final String IPV6 = "Ipv6";
-	public static final String APPLICATIONS = "Applications";
+	public static final String GLOBAL = "Global";
+	public static final String APPS = "Apps";
 	public static final String ENABLE = "Enable";
-
-	private static final String CONFIGS_DEFAULT = "protocols:\n" +
-		"  generic: &generic\n" +
-		"    request: 'POST /zh-cn HTTP/1.1\\r\\n" +
-				"Host: www.microsoft.com\\r\\n" +
-				"Content-Type: application/octet-stream\\r\\n" +
-				"Connection: keep-alive\\r\\n\\r\\n'\n" +
-		"    response: 'HTTP/1.1 200 OK\\r\\n" +
-				"Server: Microsoft-IIS/8.5\\r\\n" +
-				"Content-Type: application/octet-stream\\r\\n" +
-				"Connection: keep-alive\\r\\n\\r\\n'\n" +
-		"\n" +
-		"servers:\n" +
-		"  usa:\n" +
-		"    port: 80\n" +
-		"    address: 10.0.0.1\n" +
-		"    password:\n" +
-		"    protocol: *generic\n" +
-		"    weight: 1\n";
 
 	private SharedPreferences prefs;
 
@@ -46,7 +30,7 @@ public class Preferences
 	}
 
 	public String getConfigs() {
-		return prefs.getString(CONFIGS, CONFIGS_DEFAULT);
+		return prefs.getString(CONFIGS, "");
 	}
 
 	public void setConfigs(String extra_configs) {
@@ -55,13 +39,33 @@ public class Preferences
 		editor.commit();
 	}
 
-	public boolean getGlobal() {
-		return prefs.getBoolean(GLOBAL, false);
+	public String getConfigUrl() {
+		return prefs.getString(CONFIG_URL, "https://hev.cc/htp/htp.yml");
 	}
 
-	public void setGlobal(boolean enable) {
+	public void setConfigUrl(String extra_configs) {
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(GLOBAL, enable);
+		editor.putString(CONFIG_URL, extra_configs);
+		editor.commit();
+	}
+
+	public String getUsername() {
+		return prefs.getString(USERNAME, "");
+	}
+
+	public void setUsername(String username) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(USERNAME, username);
+		editor.commit();
+	}
+
+	public String getPassword() {
+		return prefs.getString(PASSWORD, "");
+	}
+
+	public void setPassword(String password) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(PASSWORD, password);
 		editor.commit();
 	}
 
@@ -85,13 +89,23 @@ public class Preferences
 		editor.commit();
 	}
 
-	public Set<String> getApplications() {
-		return prefs.getStringSet(APPLICATIONS, new HashSet<String>());
+	public boolean getGlobal() {
+		return prefs.getBoolean(GLOBAL, false);
 	}
 
-	public void setApplications(Set<String> applications) {
+	public void setGlobal(boolean enable) {
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putStringSet(APPLICATIONS, applications);
+		editor.putBoolean(GLOBAL, enable);
+		editor.commit();
+	}
+
+	public Set<String> getApps() {
+		return prefs.getStringSet(APPS, new HashSet<String>());
+	}
+
+	public void setApps(Set<String> apps) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putStringSet(APPS, apps);
 		editor.commit();
 	}
 
