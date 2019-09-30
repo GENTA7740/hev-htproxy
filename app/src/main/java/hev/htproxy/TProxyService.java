@@ -87,7 +87,7 @@ public class TProxyService extends VpnService {
 		if (prefs.getGlobal()) {
 			session += "/Global";
 		} else {
-			for (String appName : prefs.getApplications()) {
+			for (String appName : prefs.getApps()) {
 				try {
 					builder.addAllowedApplication(appName);
 					disallowSelf = false;
