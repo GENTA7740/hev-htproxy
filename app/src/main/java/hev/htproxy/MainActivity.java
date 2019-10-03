@@ -7,8 +7,8 @@ package hev.htproxy;
 
 import java.net.URL;
 import java.net.Authenticator;
+import java.net.URLConnection;
 import java.net.PasswordAuthentication;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.io.InputStream;
 import java.io.IOException;
@@ -169,25 +169,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			}
 
 			try {
-				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+				URLConnection conn = url.openConnection();
 				conn.setConnectTimeout(5000);
 				conn.setReadTimeout(5000);
-				if (conn.getResponseCode() == 200) {
-					int s, size = 0, total = 16384;
-					byte[] content = new byte[total + 1];
-					InputStream istream = conn.getInputStream();
-					for (; (total - size) > 0; size += s) {
-						s = istream.read(content, size, total - size);
-						if (s <= 0)
-						  break;
-					}
-					if (size > 0) {
-						prefs.setConfigs(new String(content, 0, size, StandardCharsets.UTF_8));
-						res = true;
-					}
-					istream.close();
+				int s, size = 0, total = 16384;
+				byte[] content = new byte[total + 1];
+				InputStream istream = conn.getInputStream();
+				for (; (total - size) > 0; size += s) {
+					s = istream.read(content, size, total - size);
+					if (s <= 0)
+					  break;
 				}
-				conn.disconnect();
+				if (size > 0) {
+					prefs.setConfigs(new String(content, 0, size, StandardCharsets.UTF_8));
+					res = true;
+				}
+				istream.close();
 			} catch (IOException e) {
 				return false;
 			}
