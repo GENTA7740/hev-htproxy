@@ -43,17 +43,22 @@ public class AppListActivity extends ListActivity {
 		}
 		Collections.sort(pkginfos, new Comparator<PackageInfo>() {
 			public int compare(PackageInfo a, PackageInfo b) {
-				String aLabel, bLabel;
+				Preferences prefs = new Preferences(getApplicationContext());
+				Set<String> apps = prefs.getApps();
+				boolean aSel = apps.contains(a.packageName);
+				boolean bSel = apps.contains(b.packageName);
+				if (aSel != bSel)
+				  return aSel ? -1 : 1;
+
 				PackageManager pm = getPackageManager();
-				aLabel = a.applicationInfo.loadLabel(pm).toString();
-				bLabel = b.applicationInfo.loadLabel(pm).toString();
-				if (aLabel.equals(bLabel))
-				  return 0;
+				String aLabel = a.applicationInfo.loadLabel(pm).toString();
+				String bLabel = b.applicationInfo.loadLabel(pm).toString();
 				return aLabel.compareTo(bLabel);
 			}
 		});
 
-		AppArrayAdapter adapter = new AppArrayAdapter(this, pkginfos.toArray(new PackageInfo[0]));
+		AppArrayAdapter adapter;
+		adapter = new AppArrayAdapter(this, pkginfos.toArray(new PackageInfo[0]));
 		setListAdapter(adapter);
 
 		prefs = new Preferences(this);
