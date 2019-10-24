@@ -6,25 +6,68 @@
 package hev.htproxy;
 
 import java.util.Set;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collections;
+import android.Manifest;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.LayoutInflater;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.util.SparseBooleanArray;
+import android.widget.TextView;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.ApplicationInfo;
 
-import hev.htproxy.AppArrayAdapter;
-
 public class AppListActivity extends ListActivity {
 	private Preferences prefs;
+	private boolean isChanged = false;
+
+	private class Package {
+		public PackageInfo info;
+		public boolean selected;
+		public String label;
+
+		public Package(PackageInfo info, boolean selected, String label) {
+			this.info = info;
+			this.selected = selected;
+			this.label = label;
+		}
+	}
+
+	private class AppArrayAdapter extends ArrayAdapter<Package> {
+		public AppArrayAdapter(Context context) {
+			super(context, R.layout.appitem);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) getContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater.inflate(R.layout.appitem, parent, false);
+			ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+			TextView textView = (TextView) rowView.findViewById(R.id.name);
+			CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checked);
+
+			Package pkg = getItem(position);
+			PackageManager pm = getContext().getPackageManager();
+			ApplicationInfo appinfo = pkg.info.applicationInfo;
+			imageView.setImageDrawable(appinfo.loadIcon(pm));
+			textView.setText(appinfo.loadLabel(pm).toString());
+			checkBox.setChecked(pkg.selected);
+
+			return rowView;
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,68 +75,59 @@ public class AppListActivity extends ListActivity {
 
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+		prefs = new Preferences(this);
+		Set<String> apps = prefs.getApps();
 		PackageManager pm = getPackageManager();
-		List<PackageInfo> pkginfos = pm.getInstalledPackages(0);
-		Iterator<PackageInfo> iter = pkginfos.iterator();
-		while (iter.hasNext()) {
-			if (iter.next().packageName.equals(getPackageName())) {
-				iter.remove();
-				break;
-			}
-		}
-		Collections.sort(pkginfos, new Comparator<PackageInfo>() {
-			public int compare(PackageInfo a, PackageInfo b) {
-				Preferences prefs = new Preferences(getApplicationContext());
-				Set<String> apps = prefs.getApps();
-				boolean aSel = apps.contains(a.packageName);
-				boolean bSel = apps.contains(b.packageName);
-				if (aSel != bSel)
-				  return aSel ? -1 : 1;
+		AppArrayAdapter adapter = new AppArrayAdapter(this);
 
-				PackageManager pm = getPackageManager();
-				String aLabel = a.applicationInfo.loadLabel(pm).toString();
-				String bLabel = b.applicationInfo.loadLabel(pm).toString();
-				return aLabel.compareTo(bLabel);
+		for (PackageInfo info : pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)) {
+			if (info.packageName.equals(getPackageName()))
+			  continue;
+			if (info.requestedPermissions == null)
+			  continue;
+			if (!Arrays.asList(info.requestedPermissions).contains(Manifest.permission.INTERNET))
+			  continue;
+			boolean selected = apps.contains(info.packageName);
+			String label = info.applicationInfo.loadLabel(pm).toString();
+			Package pkg = new Package(info, selected, label);
+			adapter.add(pkg);
+		}
+
+		adapter.sort(new Comparator<Package>() {
+			public int compare(Package a, Package b) {
+				if (a.selected != b.selected)
+				  return a.selected ? -1 : 1;
+				return a.label.compareTo(b.label);
 			}
 		});
 
-		AppArrayAdapter adapter;
-		adapter = new AppArrayAdapter(this, pkginfos.toArray(new PackageInfo[0]));
 		setListAdapter(adapter);
-
-		prefs = new Preferences(this);
-		Set<String> apps = prefs.getApps();
-		for (int i = 0; i < pkginfos.size(); i++) {
-			PackageInfo pkginfo = adapter.getItem(i);
-			if (apps.contains(pkginfo.packageName))
-			  getListView().setItemChecked(i, true);
-		}
 	}
 
 	@Override
 	protected void onDestroy() {
-		ListView list_view = getListView();
-		AppArrayAdapter adapter = (AppArrayAdapter) list_view.getAdapter();
-		int count = list_view.getCount();
-		SparseBooleanArray sb_array = list_view.getCheckedItemPositions();
-		Set<String> apps = new HashSet<String>();
+		if (isChanged) {
+			AppArrayAdapter adapter = (AppArrayAdapter) getListView().getAdapter();
+			Set<String> apps = new HashSet<String>();
 
-		for (int i = 0; i < count; i++) {
-			if (!sb_array.get(i))
-			  continue;
+			for (int i = 0; i < adapter.getCount(); i++) {
+				Package pkg = adapter.getItem(i);
+				if (pkg.selected)
+				  apps.add(pkg.info.packageName);
+			}
 
-			PackageInfo pkginfo = adapter.getItem(i);
-			ApplicationInfo appinfo = pkginfo.applicationInfo;
-			apps.add(pkginfo.packageName);
+			prefs.setApps(apps);
 		}
 
-		prefs.setApps(apps);
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		AppArrayAdapter adapter = (AppArrayAdapter) l.getAdapter();
+		adapter.getItem(position).selected = !adapter.getItem(position).selected;
 		CheckBox checkbox = (CheckBox) v.findViewById(R.id.checked);
-		checkbox.setChecked(l.isItemChecked(position));
+		checkbox.setChecked(adapter.getItem(position).selected);
+		isChanged = true;
 	}
 }
