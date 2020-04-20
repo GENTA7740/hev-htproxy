@@ -69,12 +69,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	}
 
 	@Override
-	protected void onDestroy() {
-		savePrefs();
-		super.onDestroy();
-	}
-
-	@Override
 	protected void onActivityResult(int request, int result, Intent data) {
 		if ((result == RESULT_OK) && prefs.getEnable()) {
 			Intent intent = new Intent(this, TProxyService.class);
@@ -94,14 +88,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 			updateConfigs();
 		} else if (view == button_control) {
 			boolean isEnable = prefs.getEnable();
+			prefs.setEnable(!isEnable);
+			savePrefs();
+			updateUI();
 			Intent intent = new Intent(this, TProxyService.class);
 			if (isEnable)
 			  startService(intent.setAction(TProxyService.ACTION_DISCONNECT));
 			else
 			  startService(intent.setAction(TProxyService.ACTION_CONNECT));
-			prefs.setEnable(!isEnable);
-			savePrefs();
-			updateUI();
 		}
 	}
 
