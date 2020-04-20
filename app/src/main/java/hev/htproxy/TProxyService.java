@@ -163,6 +163,7 @@ public class TProxyService extends VpnService {
 			return;
 		}
 		TProxyStartService(tproxy_file.getAbsolutePath(), tunFd.getFd());
+		prefs.setEnable(true);
 
 		Intent i = new Intent(this, TProxyService.class);
 		PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
