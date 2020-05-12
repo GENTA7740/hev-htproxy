@@ -43,7 +43,7 @@ android {
 
 	sourceSets {
 		main {
-			jniLibs.srcDirs = ["src/main/jni/hev-socks5-client/libs"]
+			jniLibs.srcDirs = ["src/main/jni/hev-http-stream/libs"]
 		}
 	}
 
