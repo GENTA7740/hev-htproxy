@@ -17,8 +17,8 @@ import android.net.VpnService;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 public class TProxyService extends VpnService {
-	private static native void Socks5StartService(String config_path);
-	private static native void Socks5StopService();
+	private static native void HStreamStartService(String config_path);
+	private static native void HStreamStopService();
 
 	private static native void TProxyStartService(String config_path, int fd);
 	private static native void TProxyStopService();
@@ -27,7 +27,7 @@ public class TProxyService extends VpnService {
 	public static final String ACTION_DISCONNECT = "hev.htproxy.DISCONNECT";
 
 	static {
-		System.loadLibrary("hev-socks5-client");
+		System.loadLibrary("hev-http-stream");
 		System.loadLibrary("hev-socks5-tunnel");
 	}
 
@@ -110,24 +110,24 @@ public class TProxyService extends VpnService {
 			return;
 		}
 
-		/* Socks5 */
-		File socks5_file = new File(getCacheDir(), "socks5.conf");
+		/* HStream */
+		File hstream_file = new File(getCacheDir(), "hstream.conf");
 		try {
-			socks5_file.createNewFile();
-			FileOutputStream fos = new FileOutputStream(socks5_file, false);
+			hstream_file.createNewFile();
+			FileOutputStream fos = new FileOutputStream(hstream_file, false);
 
-			String socks5_conf = "main:\n" +
+			String hstream_conf = "main:\n" +
 				"  workers: 4\n" +
 				"  port: " + prefs.getSocks5Port() + "\n" +
 				"  listen-address: '" + prefs.getSocks5Address() + "'\n" +
 				prefs.getConfigs() + "\n";
 
-			fos.write(socks5_conf.getBytes());
+			fos.write(hstream_conf.getBytes());
 			fos.close();
 		} catch (IOException e) {
 			return;
 		}
-		Socks5StartService(socks5_file.getAbsolutePath());
+		HStreamStartService(hstream_file.getAbsolutePath());
 
 		/* TProxy */
 		File tproxy_file = new File(getCacheDir(), "tproxy.conf");
@@ -184,8 +184,8 @@ public class TProxyService extends VpnService {
 		/* TProxy */
 		TProxyStopService();
 
-		/* Socks5 */
-		Socks5StopService();
+		/* HStream */
+		HStreamStopService();
 
 		/* VPN */
 		try {
