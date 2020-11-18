@@ -124,7 +124,7 @@ public class Preferences
 	}
 
 	public int getTunnelMtu() {
-		return 8192;
+		return 10496;
 	}
 
 	public String getTunnelIpv4Address() {
