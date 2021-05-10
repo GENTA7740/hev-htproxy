@@ -70,7 +70,7 @@ public class TProxyService extends VpnService {
 			int prefix = prefs.getTunnelIpv4Prefix();
 			builder.addAddress(addr, prefix);
 			builder.addRoute("0.0.0.0", 0);
-			builder.addDnsServer(prefs.getTunnelIpv4Gateway());
+			builder.addDnsServer(prefs.getTunnelDnsIpv4Address());
 			session += "IPv4";
 		}
 		if (prefs.getIpv6()) {
@@ -78,7 +78,7 @@ public class TProxyService extends VpnService {
 			int prefix = prefs.getTunnelIpv6Prefix();
 			builder.addAddress(addr, prefix);
 			builder.addRoute("::", 0);
-			builder.addDnsServer(prefs.getTunnelIpv6Gateway());
+			builder.addDnsServer(prefs.getTunnelDnsIpv6Address());
 			if (!session.isEmpty())
 			  session += " + ";
 			session += "IPv6";
@@ -140,9 +140,7 @@ public class TProxyService extends VpnService {
 				"  address: '" + prefs.getSocks5Address() + "'\n" +
 				"tunnel:\n" +
 				"  name: '" + prefs.getTunnelName() + "'\n" +
-				"  mtu: " + prefs.getTunnelMtu() + "\n" +
-				"  dns:\n" +
-				"    port: " + prefs.getTunnelDnsPort() + "\n";
+				"  mtu: " + prefs.getTunnelMtu() + "\n";
 
 			if (prefs.getIpv4()) {
 				tproxy_conf += "  ipv4:\n" +
