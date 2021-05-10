@@ -151,8 +151,12 @@ public class Preferences
 		return 126;
 	}
 
-	public int getTunnelDnsPort() {
-		return 53;
+	public String getTunnelDnsIpv4Address() {
+		return "8.8.8.8";
+	}
+
+	public String getTunnelDnsIpv6Address() {
+		return "2001:4860:4860::8888";
 	}
 
 	public String getSocks5Address() {
