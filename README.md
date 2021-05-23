@@ -4,8 +4,10 @@ A Socks5 transparent proxy for Android.
 
 **Features**
 * Redirect TCP connections.
-* Redirect DNS queries. (see [server](https://gitlab.com/hev/hev-socks5-server))
+* Redirect UDP packets. (UDP over TCP see [server](https://gitlab.com/hev/hev-socks5-server))
 * IPv4/IPv6. (dual stack)
+
+Tip: This project contains closed-source submodule for traffic encryption.
 
 ## How to Build
 
