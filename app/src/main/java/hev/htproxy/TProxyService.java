@@ -116,7 +116,9 @@ public class TProxyService extends VpnService {
 			hstream_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(hstream_file, false);
 
-			String hstream_conf = "main:\n" +
+			String hstream_conf = "misc:\n" +
+				"  task-stack-size: " + prefs.getTaskStackSize() + "\n" +
+				"main:\n" +
 				"  workers: 4\n" +
 				"  port: " + prefs.getSocks5Port() + "\n" +
 				"  listen-address: '" + prefs.getSocks5Address() + "'\n" +
@@ -135,7 +137,9 @@ public class TProxyService extends VpnService {
 			tproxy_file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(tproxy_file, false);
 
-			String tproxy_conf = "socks5:\n" +
+			String tproxy_conf = "misc:\n" +
+				"  task-stack-size: " + prefs.getTaskStackSize() + "\n" +
+				"socks5:\n" +
 				"  port: " + prefs.getSocks5Port() + "\n" +
 				"  address: '" + prefs.getSocks5Address() + "'\n" +
 				"tunnel:\n" +
