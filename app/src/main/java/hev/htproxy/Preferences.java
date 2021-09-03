@@ -166,4 +166,8 @@ public class Preferences
 	public int getSocks5Port() {
 		return 1080;
 	}
+
+	public int getTaskStackSize() {
+		return 20480;
+	}
 }
