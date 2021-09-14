@@ -195,5 +195,7 @@ public class TProxyService extends VpnService {
 		} catch (IOException e) {
 		}
 		tunFd = null;
+
+		System.exit(0);
 	}
 }
