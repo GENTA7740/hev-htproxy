@@ -40,7 +40,7 @@ public class Preferences
 	}
 
 	public String getConfigUrl() {
-		return prefs.getString(CONFIG_URL, "https://hev.cc/htp/htp.yml");
+		return prefs.getString(CONFIG_URL, "https://hev.cc/htp.yml");
 	}
 
 	public void setConfigUrl(String extra_configs) {
