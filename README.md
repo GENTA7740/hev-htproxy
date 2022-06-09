@@ -21,4 +21,4 @@ gradle assembleDebug
 * **Heiher** - https://hev.cc
 
 ## License
-LGPL
+MIT
